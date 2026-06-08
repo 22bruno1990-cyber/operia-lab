@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>ParkFlow Motorista</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f8fc;
+      --card: rgba(255, 255, 255, 0.96);
+      --soft: #eef6fb;
+      --line: rgba(24, 56, 92, 0.11);
+      --text: #17324f;
+      --muted: #6f87a2;
+      --brand: #2eb8ff;
+      --brand-2: #7fe6c4;
+      --warn: #ffcf66;
+      --danger: #ff8a8a;
+      --ok: #41c88d;
+      --shadow: 0 22px 58px rgba(34, 65, 102, 0.14);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: light; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Avenir Next", "Montserrat", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(46, 184, 255, 0.15), transparent 26%),
+        radial-gradient(circle at 92% 12%, rgba(127, 230, 196, 0.16), transparent 24%),
+        linear-gradient(180deg, #f8fcff 0%, #eef6fb 55%, #f6f9fc 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(23, 50, 79, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 50, 79, 0.035) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04));
+    }
+
+    .app {
+      width: min(1420px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 54px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar,
+    .hero,
+    .panel,
+    .phone,
+    .parking-card,
+    .receipt {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .demo-switcher {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      padding: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      box-shadow: 0 18px 44px rgba(34, 65, 102, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .demo-switcher a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #23496e;
+      background: rgba(245, 249, 253, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.09);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .demo-switcher a.active {
+      color: #0d2942;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: #0d2942;
+      font-weight: 900;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    h1, h2, h3, h4, p { margin: 0; }
+
+    .brand h1 {
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .muted,
+    .brand p,
+    label,
+    .hero p,
+    .panel p {
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #1f7d59;
+      background: rgba(65, 200, 141, 0.1);
+      border: 1px solid rgba(65, 200, 141, 0.18);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 22px;
+      padding: 26px;
+      margin-bottom: 20px;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 16px;
+      align-content: center;
+    }
+
+    .hero h2 {
+      font-size: clamp(34px, 4.6vw, 68px);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+    }
+
+    .hero .accent {
+      background: linear-gradient(135deg, #1589c8, #2fba7e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.62;
+      max-width: 720px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 20px;
+    }
+
+    .phone {
+      padding: 18px;
+      border-radius: 38px;
+      background: #102740;
+      position: sticky;
+      top: 18px;
+      align-self: start;
+    }
+
+    .phone-screen {
+      min-height: 760px;
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, #f9fcff 0%, #eff7fb 100%);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+    }
+
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 18px 8px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .phone-content {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .phone-card {
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+      box-shadow: 0 16px 36px rgba(34, 65, 102, 0.08);
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      border-radius: 16px;
+      padding: 12px 16px;
+      color: var(--text);
+      background: rgba(244, 248, 252, 0.94);
+      font: inherit;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      color: #0d2942;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .tab-panel {
+      display: none;
+      gap: 18px;
+    }
+
+    .tab-panel.active {
+      display: grid;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select {
+      color-scheme: light;
+      width: 100%;
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      border-radius: 16px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(46, 184, 255, 0.44);
+      box-shadow: 0 0 0 4px rgba(46, 184, 255, 0.12);
+    }
+
+    button {
+      color-scheme: light;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      color: #0d2942;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 18px 34px rgba(46, 184, 255, 0.18);
+    }
+
+    .secondary {
+      color: #23496e;
+      background: rgba(245, 249, 253, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.1);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .parking-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .parking-card {
+      padding: 18px;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .parking-card.selected,
+    .parking-card:hover {
+      border-color: rgba(46, 184, 255, 0.36);
+      transform: translateY(-2px);
+      box-shadow: 0 24px 54px rgba(46, 184, 255, 0.14);
+    }
+
+    .parking-card strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .map-panel {
+      min-height: 220px;
+      border-radius: 24px;
+      padding: 18px;
+      background:
+        linear-gradient(90deg, rgba(46, 184, 255, 0.08) 1px, transparent 1px) 0 0 / 38px 38px,
+        linear-gradient(rgba(46, 184, 255, 0.08) 1px, transparent 1px) 0 0 / 38px 38px,
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 248, 252, 0.96));
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-route {
+      position: absolute;
+      inset: 42px 48px;
+      border: 3px dashed rgba(46, 184, 255, 0.42);
+      border-left: 0;
+      border-bottom: 0;
+      border-radius: 0 70px 0 0;
+    }
+
+    .map-pin {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      color: #0d2942;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border: 4px solid #fff;
+      box-shadow: 0 14px 28px rgba(34, 65, 102, 0.18);
+    }
+
+    .pin-origin { left: 34px; bottom: 34px; }
+    .pin-destination { right: 38px; top: 34px; }
+
+    .parking-card .price-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .payment-option {
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      border-radius: 18px;
+      padding: 12px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .payment-option input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .payment-option strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .payment-option span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .arrival-alert {
+      display: grid;
+      gap: 6px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(65, 200, 141, 0.08);
+      border: 1px solid rgba(65, 200, 141, 0.18);
+      color: #1f7d59;
+    }
+
+    .arrival-alert.warning {
+      background: rgba(255, 207, 102, 0.14);
+      border-color: rgba(255, 207, 102, 0.34);
+      color: #8a6418;
+    }
+
+    .route-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .route-link {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: #23496e;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(246, 250, 254, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .mini strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .receipt {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .qr {
+      width: 118px;
+      height: 118px;
+      border-radius: 22px;
+      background:
+        linear-gradient(90deg, #17324f 12px, transparent 12px) 0 0 / 28px 28px,
+        linear-gradient(#17324f 12px, transparent 12px) 0 0 / 28px 28px,
+        #ffffff;
+      border: 8px solid #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(24, 56, 92, 0.14);
+    }
+
+    .qr.pix {
+      width: 150px;
+      height: 150px;
+      border-radius: 26px;
+      background:
+        linear-gradient(90deg, #17324f 10px, transparent 10px) 0 0 / 24px 24px,
+        linear-gradient(#17324f 10px, transparent 10px) 0 0 / 24px 24px,
+        linear-gradient(135deg, rgba(46, 184, 255, 0.14), rgba(127, 230, 196, 0.16)),
+        #ffffff;
+    }
+
+    .payment-status {
+      display: none;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(46, 184, 255, 0.18);
+      background: linear-gradient(135deg, rgba(46, 184, 255, 0.08), rgba(127, 230, 196, 0.1));
+    }
+
+    .payment-status.visible {
+      display: grid;
+      grid-template-columns: auto 1fr;
+    }
+
+    .payment-status strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 18px;
+    }
+
+    .feedback {
+      min-height: 22px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .feedback.success { color: #1d7b56; }
+    .feedback.error { color: #a14646; }
+
+    @media (max-width: 1120px) {
+      .hero,
+      .layout,
+      .parking-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        position: relative;
+        top: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app { width: min(100%, calc(100% - 18px)); }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .field-grid,
+      .payment-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="demo-switcher" aria-label="Alternar visão da demo">
+    <a class="active" href="parkflow_driver.html">Driver</a>
+    <a href="parkflow_ops.html">Parking</a>
+    <a href="parkflow_partner.html">Comercial</a>
+    <a href="parkflow_home.html">Início</a>
+  </nav>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">P</div>
+        <div>
+          <h1>ParkFlow Motorista</h1>
+          <p>Visão de quem reserva a vaga pelo celular</p>
+        </div>
+      </div>
+      <a class="pill" href="parkflow_ops.html">Ver gestão do estacionamento</a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="pill">Motorista no app</span>
+        <h2>Do cadastro do carro ao comprovante de vaga <span class="accent">em poucos passos.</span></h2>
+        <p>Essa visão mostra para o futuro parceiro como o cliente cadastra o veículo, escolhe o estacionamento, define a duração, paga a reserva e chega com a placa pronta para conferência.</p>
+      </div>
+      <div class="panel">
+        <div class="mini-grid">
+          <div class="mini"><strong>1</strong><span class="muted">Cadastrar carro e placa</span></div>
+          <div class="mini"><strong>2</strong><span class="muted">Buscar por destino e chegada viável</span></div>
+          <div class="mini"><strong>3</strong><span class="muted">Pagar por Pix, cartão ou Parking Pay</span></div>
+        </div>
+      </div>
+    </section>
+
+    <main class="layout">
+      <aside class="phone" aria-label="Prévia do aplicativo no celular">
+        <div class="phone-screen">
+          <div class="phone-status">
+            <span>09:41</span>
+            <span>5G • 92%</span>
+          </div>
+          <div class="phone-content" id="phonePreview">
+            <div class="phone-card">
+              <span class="pill">Vaga garantida</span>
+              <h3 style="margin-top:14px;">Olá, motorista</h3>
+              <p class="muted">Cadastre seu carro para liberar busca e reserva.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="tabs">
+          <button class="tab-btn active" type="button" data-tab-target="tab-driver">Cadastro do Carro</button>
+          <button class="tab-btn" type="button" data-tab-target="tab-search">Buscar Vaga</button>
+          <button class="tab-btn" type="button" data-tab-target="tab-receipt">Comprovante</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-driver">
+          <div>
+            <h2>Cadastro do motorista e do carro</h2>
+            <p class="muted">Essa é a primeira experiência do usuário: nome, telefone, placa e modelo do veículo.</p>
+          </div>
+          <form id="driverForm">
+            <div class="field-grid">
+              <label>
+                Nome do motorista
+                <input name="full_name" value="Bianca Almeida" required>
+              </label>
+              <label>
+                Telefone
+                <input name="phone" value="+55 81 98888-1040" required>
+              </label>
+            </div>
+            <div class="field-grid">
+              <label>
+                Placa do carro
+                <input name="plate" value="RVD-3E91" required>
+              </label>
+              <label>
+                Modelo do carro
+                <input name="model" value="Fiat Pulse" required>
+              </label>
+            </div>
+            <div class="field-grid">
+              <label>
+                Cor
+                <input name="color" value="Branco" required>
+              </label>
+              <label>
+                Região
+                <input name="region" value="beira-mar" required>
+              </label>
+            </div>
+            <div class="actions">
+              <button class="primary" type="submit">Salvar Motorista e Carro</button>
+              <button class="secondary" type="button" id="useDemoProfileBtn">Usar Perfil Demo</button>
+            </div>
+            <div class="feedback" id="driverFeedback"></div>
+          </form>
+        </div>
+
+        <div class="tab-panel" id="tab-search">
+          <div>
+            <h2>Buscar e reservar vaga</h2>
+            <p class="muted">O motorista informa o destino, vê pátios próximos, compara tempo de chegada, escolhe duração e paga a reserva.</p>
+          </div>
+          <form id="reservationForm">
+            <div class="field-grid">
+              <label>
+                Para onde você vai?
+                <input name="destination" value="Rua Frei Caneca, 170 - Beira Mar" required>
+              </label>
+              <label>
+                App de rota
+                <select name="route_app" required>
+                  <option value="Waze">Waze</option>
+                  <option value="Google Maps">Google Maps</option>
+                  <option value="Apple Maps">Apple Maps</option>
+                </select>
+              </label>
+            </div>
+            <div class="field-grid">
+              <label>
+                Entrada
+                <input name="start_at" type="datetime-local" required>
+              </label>
+              <label>
+                Duração
+                <select name="duration_hours" required>
+                  <option value="1">1 hora</option>
+                  <option value="2">2 horas</option>
+                  <option value="3" selected>3 horas</option>
+                  <option value="4">4 horas</option>
+                  <option value="6">6 horas</option>
+                  <option value="12">12 horas</option>
+                  <option value="24">24 horas</option>
+                </select>
+              </label>
+            </div>
+            <div class="map-panel" id="mapPanel">
+              <div class="map-route"></div>
+              <div class="map-pin pin-origin">Você</div>
+              <div class="map-pin pin-destination">Destino</div>
+              <div class="mini" style="position:absolute; left:18px; top:18px; max-width:360px;">
+                <strong>Mapa demonstrativo</strong>
+                <span class="muted" id="routeSummary">Informe destino e horário para simular chegada.</span>
+                <div class="route-actions">
+                  <a class="route-link" id="wazeLink" href="#" target="_blank" rel="noreferrer">Abrir Waze</a>
+                  <a class="route-link" id="mapsLink" href="#" target="_blank" rel="noreferrer">Abrir Maps</a>
+                </div>
+              </div>
+            </div>
+            <div class="arrival-alert" id="arrivalAlert">
+              <strong>Chegada protegida</strong>
+              <span>O sistema calcula rota e margem antes de liberar a reserva.</span>
+            </div>
+            <div class="parking-grid" id="parkingGrid"></div>
+            <div class="mini-grid">
+              <div class="mini"><strong id="quoteGross">--</strong><span class="muted">Valor para o motorista</span></div>
+              <div class="mini"><strong id="quotePartner">--</strong><span class="muted">Repasse ao estacionamento</span></div>
+              <div class="mini"><strong id="quoteFee">--</strong><span class="muted">Taxa ParkFlow</span></div>
+              <div class="mini"><strong id="quoteAvailability">--</strong><span class="muted">Vagas no horário</span></div>
+            </div>
+            <div>
+              <h3>Forma de pagamento</h3>
+              <p class="muted">A vaga só aparece como confirmada depois do pagamento aprovado. O split separa automaticamente a taxa ParkFlow e o repasse do estacionamento.</p>
+            </div>
+            <div class="payment-grid">
+              <label class="payment-option">
+                <input type="radio" name="payment_method" value="Pix" checked>
+                <strong>Pix</strong>
+                <span>Gera QR Code antes de confirmar.</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment_method" value="Cartão na wallet">
+                <strong>Wallet</strong>
+                <span>Cartão salvo: crédito ou débito.</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment_method" value="Cartão novo">
+                <strong>Cartão novo</strong>
+                <span>Visa, Mastercard, Elo e Amex.</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment_method" value="Terminal parceiro integrado">
+                <strong>Terminal parceiro</strong>
+                <span>Maquininha/sistema integrado com repasse ParkFlow.</span>
+              </label>
+            </div>
+            <div class="payment-status" id="paymentStatus">
+              <div class="qr pix" aria-label="QR Pix demonstrativo"></div>
+              <div>
+                <strong id="paymentStatusTitle">Pagamento ainda não iniciado</strong>
+                <p class="muted" id="paymentStatusText">Escolha a forma de pagamento e confirme para simular a aprovação antes de bloquear a vaga.</p>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" type="button" id="quoteBtn">Simular Valor</button>
+              <button class="primary" type="submit">Pagar e Confirmar Vaga</button>
+            </div>
+            <div class="feedback" id="reservationFeedback"></div>
+          </form>
+        </div>
+
+        <div class="tab-panel" id="tab-receipt">
+          <div>
+            <h2>Comprovante da reserva</h2>
+            <p class="muted">Esse é o material que o motorista mostra ao chegar, enquanto a reserva já aparece no painel do estacionamento.</p>
+          </div>
+          <div class="receipt" id="receipt">
+            <div class="muted">Nenhuma reserva criada ainda.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      apiBase: "http://127.0.0.1:8010",
+      catalog: { parkings: [], users: [], vehicles: [] },
+      user: null,
+      vehicle: null,
+      selectedParkingId: "",
+      lastReservation: null,
+      lastInventory: null,
+      lastPaymentMethod: "Pix",
+      lastPayment: null,
+      lastQuote: null,
+    };
+
+    const parkingTravelProfiles = {
+      "park-beira-mar": { distance: "220 m", etaMinutes: 6, street: "Rua Frei Caneca" },
+      "park-prime-office": { distance: "450 m", etaMinutes: 9, street: "Av. Boa Viagem" },
+      "park-clinica-prime": { distance: "700 m", etaMinutes: 13, street: "Rua das Clínicas" },
+    };
+
+    const tabButtons = Array.from(document.querySelectorAll("[data-tab-target]"));
+    const tabPanels = Array.from(document.querySelectorAll(".tab-panel"));
+    const driverForm = document.getElementById("driverForm");
+    const reservationForm = document.getElementById("reservationForm");
+    const parkingGrid = document.getElementById("parkingGrid");
+    const phonePreview = document.getElementById("phonePreview");
+
+    function activateTab(tabId) {
+      tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tabTarget === tabId));
+      tabPanels.forEach((panel) => panel.classList.toggle("active", panel.id === tabId));
+    }
+
+    function setFeedback(id, message = "", tone = "default") {
+      const element = document.getElementById(id);
+      element.textContent = message;
+      element.className = "feedback";
+      if (tone === "success") element.classList.add("success");
+      if (tone === "error") element.classList.add("error");
+    }
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function toLocalDateTimeInput(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function toApiDateTime(value) {
+      return value ? `${value}:00` : "";
+    }
+
+    function dateToApiDateTime(date) {
+      return `${toLocalDateTimeInput(date)}:00`;
+    }
+
+    function formatDateTime(value) {
+      return new Date(value).toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${state.apiBase}${path}`, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || `Erro HTTP ${response.status}`);
+      return data;
+    }
+
+    function getSelectedParking() {
+      return state.catalog.parkings.find((parking) => parking.id === state.selectedParkingId);
+    }
+
+    function getReservationWindow() {
+      const startValue = reservationForm.elements.namedItem("start_at").value;
+      const durationHours = Number(reservationForm.elements.namedItem("duration_hours").value || "3");
+      const startDate = new Date(startValue);
+      const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);
+      return {
+        startAt: toApiDateTime(startValue),
+        endAt: dateToApiDateTime(endDate),
+        durationHours,
+      };
+    }
+
+    function getTravelProfile(parkingId) {
+      return parkingTravelProfiles[parkingId] || { distance: "900 m", etaMinutes: 15, street: "rota principal" };
+    }
+
+    function getArrivalStatus(parkingId) {
+      const startValue = reservationForm.elements.namedItem("start_at").value;
+      if (!startValue) return { ok: false, text: "Escolha a entrada", slackMinutes: 0 };
+      const profile = getTravelProfile(parkingId);
+      const now = new Date();
+      const startDate = new Date(startValue);
+      const minutesUntilReservation = Math.round((startDate.getTime() - now.getTime()) / 60000);
+      const minimumMinutes = profile.etaMinutes + 10;
+      const slackMinutes = minutesUntilReservation - profile.etaMinutes;
+      if (minutesUntilReservation < minimumMinutes) {
+        return {
+          ok: false,
+          slackMinutes,
+          text: `Horário apertado: ${profile.etaMinutes} min de rota + 10 min de margem`,
+        };
+      }
+      return {
+        ok: true,
+        slackMinutes,
+        text: `${profile.etaMinutes} min até o pátio • chegada viável`,
+      };
+    }
+
+    function getPaymentMethod() {
+      const checked = reservationForm.querySelector('input[name="payment_method"]:checked');
+      return checked ? checked.value : "Pix";
+    }
+
+    function getPaymentCopy(method) {
+      const copies = {
+        "Pix": {
+          title: "QR Pix gerado e pago",
+          text: "O motorista paga o QR Code no app. Depois da confirmação, a vaga entra no painel do estacionamento.",
+        },
+        "Cartão na wallet": {
+          title: "Cartão da wallet aprovado",
+          text: "O cartão salvo é autorizado antes da reserva. A ParkFlow retém sua taxa e agenda o repasse do estacionamento.",
+        },
+        "Cartão novo": {
+          title: "Cartão aprovado",
+          text: "O cartão é tokenizado para uso seguro. A reserva só nasce depois da aprovação.",
+        },
+        "Terminal parceiro integrado": {
+          title: "Terminal parceiro aprovado",
+          text: "A maquininha ou sistema do estacionamento registra o pagamento integrado, e a taxa ParkFlow fica prevista no split/repasse.",
+        },
+      };
+      return copies[method] || copies.Pix;
+    }
+
+    function buildPaymentSplit(quote) {
+      const details = quote.details || {};
+      const parkflowFee = Number(details.premium_fee || 0);
+      const partnerAmount = Number(details.base_total || quote.gross_revenue - parkflowFee);
+      return {
+        parkflowFee,
+        partnerAmount,
+        gross: Number(quote.gross_revenue || 0),
+      };
+    }
+
+    function setPaymentStatus(payment = null) {
+      const root = document.getElementById("paymentStatus");
+      const title = document.getElementById("paymentStatusTitle");
+      const text = document.getElementById("paymentStatusText");
+      if (!payment) {
+        root.classList.remove("visible");
+        title.textContent = "Pagamento ainda não iniciado";
+        text.textContent = "Escolha a forma de pagamento e confirme para simular a aprovação antes de bloquear a vaga.";
+        return;
+      }
+      root.classList.add("visible");
+      title.textContent = payment.title;
+      text.textContent = `${payment.text} Código ${payment.authorizationCode}.`;
+    }
+
+    function simulatePaymentApproval(method, quote) {
+      const copy = getPaymentCopy(method);
+      const split = buildPaymentSplit(quote);
+      return {
+        method,
+        title: copy.title,
+        text: copy.text,
+        status: "approved",
+        authorizationCode: `PF-${Date.now().toString().slice(-6)}`,
+        split,
+      };
+    }
+
+    function estimatePrice(parking) {
+      const durationHours = Number(reservationForm.elements.namedItem("duration_hours").value || "3");
+      return (parking.base_hour_price * durationHours) + parking.premium_fee;
+    }
+
+    function updateRouteSummary() {
+      const parking = getSelectedParking();
+      const destination = reservationForm.elements.namedItem("destination").value || "destino informado";
+      const routeApp = reservationForm.elements.namedItem("route_app").value || "Waze";
+      if (!parking) return;
+      const profile = getTravelProfile(parking.id);
+      const status = getArrivalStatus(parking.id);
+      document.getElementById("routeSummary").textContent =
+        `${routeApp}: ${profile.etaMinutes} min até ${parking.name}, próximo de ${destination}. ${status.ok ? "Horário viável." : "Ajuste o horário de entrada."}`;
+      const encodedDestination = encodeURIComponent(`${parking.name}, ${profile.street}, ${destination}`);
+      document.getElementById("wazeLink").href = `https://waze.com/ul?q=${encodedDestination}`;
+      document.getElementById("mapsLink").href = `https://www.google.com/maps/search/?api=1&query=${encodedDestination}`;
+      const alert = document.getElementById("arrivalAlert");
+      alert.classList.toggle("warning", !status.ok);
+      alert.innerHTML = status.ok
+        ? `<strong>Chegada protegida</strong><span>${status.text}. Mantemos uma margem de 10 minutos para evitar reserva impossível de cumprir.</span>`
+        : `<strong>Horário arriscado</strong><span>${status.text}. Escolha uma entrada mais tarde antes de pagar a reserva.</span>`;
+    }
+
+    function renderParkingGrid() {
+      if (!state.catalog.parkings.length) {
+        parkingGrid.innerHTML = `<div class="feedback error">Nenhum estacionamento carregado.</div>`;
+        return;
+      }
+      if (!state.selectedParkingId) {
+        state.selectedParkingId = state.catalog.parkings[0].id;
+      }
+      parkingGrid.innerHTML = state.catalog.parkings.map((parking) => `
+        <article class="parking-card ${parking.id === state.selectedParkingId ? "selected" : ""}" data-parking-id="${parking.id}">
+          <strong>${parking.name}</strong>
+          <p class="muted">${getTravelProfile(parking.id).street} • ${getTravelProfile(parking.id).distance} do destino • ${parking.mode === "numbered" ? "vaga numerada" : parking.mode === "valet" ? "valet" : "setor garantido"}</p>
+          <div class="price-line">
+            <span class="pill">R$ ${estimatePrice(parking).toFixed(2)}</span>
+            <span class="muted">${getArrivalStatus(parking.id).text}</span>
+          </div>
+        </article>
+      `).join("");
+      parkingGrid.querySelectorAll("[data-parking-id]").forEach((card) => {
+        card.addEventListener("click", () => {
+          state.selectedParkingId = card.dataset.parkingId;
+          renderParkingGrid();
+          updatePhonePreview();
+          updateRouteSummary();
+        });
+      });
+      updateRouteSummary();
+    }
+
+    function updatePhonePreview() {
+      const parking = getSelectedParking();
+      const userName = state.user ? state.user.full_name.split(" ")[0] : "motorista";
+      const vehicleText = state.vehicle ? `${state.vehicle.model} • ${state.vehicle.plate}` : "Carro ainda não cadastrado";
+      const paymentMethod = getPaymentMethod();
+      const window = reservationForm.elements.namedItem("start_at").value
+        ? getReservationWindow()
+        : null;
+      const arrival = parking ? getArrivalStatus(parking.id) : null;
+      phonePreview.innerHTML = `
+        <div class="phone-card">
+          <span class="pill">Vaga garantida</span>
+          <h3 style="margin-top:14px;">Olá, ${userName}</h3>
+          <p class="muted">${vehicleText}</p>
+        </div>
+        <div class="phone-card">
+          <h3>${parking ? parking.name : "Escolha um estacionamento"}</h3>
+          <p class="muted">${parking ? `${parking.region} • entrada por placa ou conferência no painel` : "Selecione uma vaga para simular a reserva."}</p>
+          ${window ? `<div class="mini" style="margin-top:12px;"><strong>${formatDateTime(window.startAt)}</strong><span class="muted">${window.durationHours}h • ${arrival ? arrival.text : ""}</span></div>` : ""}
+        </div>
+        <div class="phone-card">
+          <h3>Pagamento</h3>
+          <p class="muted">${paymentMethod} • pagamento aprovado antes de confirmar a vaga.</p>
+        </div>
+        <div class="phone-card">
+          <h3>Chegada tranquila</h3>
+          <p class="muted">Ao reservar, a placa fica disponível para o estacionamento preparar entrada, vaga e conferência.</p>
+        </div>
+      `;
+    }
+
+    function renderReceipt() {
+      const root = document.getElementById("receipt");
+      if (!state.lastReservation) {
+        root.innerHTML = `<div class="muted">Nenhuma reserva criada ainda.</div>`;
+        return;
+      }
+      const reservation = state.lastReservation;
+      const parking = state.catalog.parkings.find((item) => item.id === reservation.parking_id);
+      const profile = getTravelProfile(reservation.parking_id);
+      const payment = state.lastPayment || {
+        method: state.lastPaymentMethod,
+        authorizationCode: "PF-DEMO",
+        split: { partnerAmount: reservation.gross_revenue, parkflowFee: 0 },
+      };
+      root.innerHTML = `
+        <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+          <div>
+            <span class="pill">Reserva confirmada</span>
+            <h3 style="margin-top:12px;">${parking ? parking.name : reservation.parking_id}</h3>
+            <p class="muted">${state.user.full_name} • ${state.vehicle.plate} • ${state.vehicle.model}</p>
+          </div>
+          <div class="qr" aria-label="QR demonstrativo"></div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini"><strong>${formatDateTime(reservation.start_at)}</strong><span class="muted">Entrada</span></div>
+          <div class="mini"><strong>${formatDateTime(reservation.end_at)}</strong><span class="muted">Saída prevista</span></div>
+          <div class="mini"><strong>R$ ${Number(reservation.gross_revenue).toFixed(2)}</strong><span class="muted">Valor pago</span></div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini"><strong>${payment.method}</strong><span class="muted">Forma de pagamento aprovada</span></div>
+          <div class="mini"><strong>${profile.etaMinutes} min</strong><span class="muted">Tempo estimado até o pátio</span></div>
+          <div class="mini"><strong>${profile.street}</strong><span class="muted">Rua de referência</span></div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini"><strong>R$ ${payment.split.partnerAmount.toFixed(2)}</strong><span class="muted">Repasse do estacionamento</span></div>
+          <div class="mini"><strong>R$ ${payment.split.parkflowFee.toFixed(2)}</strong><span class="muted">Receita ParkFlow</span></div>
+          <div class="mini"><strong>${payment.authorizationCode}</strong><span class="muted">Autorização do pagamento</span></div>
+        </div>
+        <div class="mini"><strong>${reservation.id}</strong><span class="muted">Código da reserva para conferência no painel</span></div>
+      `;
+    }
+
+    async function refreshQuote() {
+      const parking = getSelectedParking();
+      if (!parking) return;
+      const window = getReservationWindow();
+      const [quote, inventory] = await Promise.all([
+        api("/quotes/one-off", {
+          method: "POST",
+          body: JSON.stringify({ parking_id: parking.id, hours: window.durationHours }),
+        }),
+        api(`/inventory?parking_id=${encodeURIComponent(parking.id)}&start_at=${encodeURIComponent(window.startAt)}&end_at=${encodeURIComponent(window.endAt)}`),
+      ]);
+      state.lastInventory = inventory;
+      state.lastQuote = quote;
+      const split = buildPaymentSplit(quote);
+      document.getElementById("quoteGross").textContent = `R$ ${quote.gross_revenue.toFixed(2)}`;
+      document.getElementById("quotePartner").textContent = `R$ ${split.partnerAmount.toFixed(2)}`;
+      document.getElementById("quoteFee").textContent = `R$ ${split.parkflowFee.toFixed(2)}`;
+      document.getElementById("quoteAvailability").textContent = inventory.remaining_capacity;
+      renderParkingGrid();
+      updatePhonePreview();
+    }
+
+    async function loadCatalog() {
+      const catalog = await api("/catalog");
+      state.catalog = {
+        parkings: catalog.parkings || [],
+        users: catalog.users || [],
+        vehicles: catalog.vehicles || [],
+      };
+      const demoUser = state.catalog.users.find((user) => user.id === "user-camila") || state.catalog.users[0];
+      if (demoUser) {
+        state.user = demoUser;
+        state.vehicle = state.catalog.vehicles.find((vehicle) => vehicle.user_id === demoUser.id) || null;
+      }
+      renderParkingGrid();
+      updatePhonePreview();
+    }
+
+    function setDefaultTime() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 30);
+      now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15, 0, 0);
+      reservationForm.elements.namedItem("start_at").value = toLocalDateTimeInput(now);
+    }
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => activateTab(button.dataset.tabTarget));
+    });
+
+    document.getElementById("useDemoProfileBtn").addEventListener("click", () => {
+      const demoUser = state.catalog.users.find((user) => user.id === "user-camila") || state.catalog.users[0];
+      if (!demoUser) return;
+      state.user = demoUser;
+      state.vehicle = state.catalog.vehicles.find((vehicle) => vehicle.user_id === demoUser.id) || null;
+      setFeedback("driverFeedback", `Perfil demo carregado: ${state.user.full_name}.`, "success");
+      updatePhonePreview();
+      activateTab("tab-search");
+    });
+
+    driverForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      try {
+        const user = await api("/users", {
+          method: "POST",
+          body: JSON.stringify({
+            full_name: form.elements.namedItem("full_name").value,
+            phone: form.elements.namedItem("phone").value,
+            region: form.elements.namedItem("region").value,
+          }),
+        });
+        const vehicle = await api("/vehicles", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: user.id,
+            plate: form.elements.namedItem("plate").value,
+            model: form.elements.namedItem("model").value,
+            color: form.elements.namedItem("color").value,
+            is_primary: true,
+          }),
+        });
+        state.user = user;
+        state.vehicle = vehicle;
+        setFeedback("driverFeedback", "Motorista e carro salvos com sucesso.", "success");
+        updatePhonePreview();
+        activateTab("tab-search");
+      } catch (error) {
+        setFeedback("driverFeedback", error.message, "error");
+      }
+    });
+
+    document.getElementById("quoteBtn").addEventListener("click", async () => {
+      try {
+        await refreshQuote();
+        setFeedback("reservationFeedback", "Valor e vagas consultados com sucesso.", "success");
+      } catch (error) {
+        setFeedback("reservationFeedback", error.message, "error");
+      }
+    });
+
+    reservationForm.addEventListener("change", () => {
+      state.lastPayment = null;
+      setPaymentStatus();
+      renderParkingGrid();
+      updateRouteSummary();
+      updatePhonePreview();
+    });
+
+    reservationForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!state.user || !state.vehicle) {
+        setFeedback("reservationFeedback", "Cadastre ou carregue um motorista antes de reservar.", "error");
+        activateTab("tab-driver");
+        return;
+      }
+      const parking = getSelectedParking();
+      const window = getReservationWindow();
+      const arrival = getArrivalStatus(parking.id);
+      if (!arrival.ok) {
+        setFeedback("reservationFeedback", `${arrival.text}. Escolha um horário com margem para chegada.`, "error");
+        return;
+      }
+      try {
+        state.lastPaymentMethod = getPaymentMethod();
+        await refreshQuote();
+        if (state.lastInventory && Number(state.lastInventory.remaining_capacity) <= 0) {
+          setFeedback("reservationFeedback", "Não há vaga livre nesse período. Escolha outro horário antes de pagar.", "error");
+          return;
+        }
+        const payment = simulatePaymentApproval(state.lastPaymentMethod, state.lastQuote);
+        state.lastPayment = payment;
+        setPaymentStatus(payment);
+        setFeedback("reservationFeedback", `${payment.title}. Agora a vaga será confirmada no painel.`, "success");
+        const result = await api("/reservations/one-off", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: state.user.id,
+            vehicle_id: state.vehicle.id,
+            parking_id: parking.id,
+            start_at: window.startAt,
+            end_at: window.endAt,
+            payment: {
+              status: payment.status,
+              method: payment.method,
+              authorization_code: payment.authorizationCode,
+              parkflow_fee: payment.split.parkflowFee,
+              partner_amount: payment.split.partnerAmount,
+            },
+          }),
+        });
+        state.lastReservation = result.reservation;
+        renderReceipt();
+        updatePhonePreview();
+        setFeedback("reservationFeedback", `Reserva ${result.reservation.id} confirmada.`, "success");
+        activateTab("tab-receipt");
+      } catch (error) {
+        setFeedback("reservationFeedback", error.message, "error");
+      }
+    });
+
+    setDefaultTime();
+    loadCatalog().catch((error) => {
+      setFeedback("driverFeedback", `Falha ao carregar dados: ${error.message}`, "error");
+    });
+  </script>
+</body>
+</html>

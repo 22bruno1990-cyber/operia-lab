@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>ParkFlow Ops</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f8fc;
+      --panel: rgba(255, 255, 255, 0.96);
+      --panel-soft: rgba(249, 252, 255, 0.98);
+      --line: rgba(24, 56, 92, 0.1);
+      --text: #17324f;
+      --muted: #6f87a2;
+      --brand: #2eb8ff;
+      --brand-2: #7fe6c4;
+      --warn: #ffcf66;
+      --danger: #ff8a8a;
+      --ok: #41c88d;
+      --shadow: 0 20px 48px rgba(34, 65, 102, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Avenir Next", "Montserrat", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(46, 184, 255, 0.14), transparent 24%),
+        radial-gradient(circle at top right, rgba(127, 230, 196, 0.14), transparent 22%),
+        linear-gradient(180deg, #f7fbff 0%, #eef5fb 52%, #f5f8fc 100%);
+      min-height: 100vh;
+    }
+
+    html {
+      color-scheme: light;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(23, 50, 79, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 50, 79, 0.03) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04));
+    }
+
+    .app {
+      width: min(1480px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 54px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar, .hero, .statusbar, .shell, .panel, .card, .inventory-card, .reservation-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.96));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .demo-switcher {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      padding: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      box-shadow: 0 18px 44px rgba(34, 65, 102, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .demo-switcher a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #23496e;
+      background: rgba(245, 249, 253, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.09);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .demo-switcher a.active {
+      color: #0d2942;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #0d2942;
+      font-weight: 900;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    h1, h2, h3, h4, p { margin: 0; }
+
+    .brand h1 {
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .muted, label, .brand p, .hero p, .panel p, .card p {
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow, .chip, .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .eyebrow {
+      color: #226996;
+      background: rgba(46, 184, 255, 0.12);
+      border: 1px solid rgba(46, 184, 255, 0.16);
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      font-size: clamp(34px, 4.2vw, 62px);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      margin-bottom: 14px;
+      max-width: 740px;
+    }
+
+    .hero .accent {
+      background: linear-gradient(135deg, #1589c8, #2fba7e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.6;
+      max-width: 720px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+
+    .metric {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(242, 247, 252, 0.95);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 6px;
+      letter-spacing: -0.04em;
+    }
+
+    .statusbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+
+    .chip {
+      background: rgba(65, 200, 141, 0.1);
+      color: #1f7d59;
+      border: 1px solid rgba(65, 200, 141, 0.18);
+    }
+
+    .chip.warn {
+      background: rgba(255, 207, 102, 0.16);
+      color: #93640d;
+      border-color: rgba(255, 207, 102, 0.22);
+    }
+
+    .chip.error {
+      background: rgba(255, 138, 138, 0.14);
+      color: #a74444;
+      border-color: rgba(255, 138, 138, 0.2);
+    }
+
+    .flash {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .shell {
+      padding: 18px;
+    }
+
+    .api-row {
+      display: grid;
+      grid-template-columns: 1.15fr auto auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      background: rgba(244, 248, 252, 0.92);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tab-btn.active {
+      color: #0d2942;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 16px 34px rgba(46, 184, 255, 0.18);
+    }
+
+    .tab-panels {
+      display: grid;
+      gap: 18px;
+    }
+
+    .tab-panel {
+      display: none;
+      gap: 18px;
+    }
+
+    .tab-panel.active {
+      display: grid;
+    }
+
+    .tab-intro {
+      padding: 20px 22px;
+    }
+
+    .title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .tab-intro h3 {
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .help-trigger {
+      position: relative;
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(46, 184, 255, 0.12);
+      color: #1f6d99;
+      border: 1px solid rgba(46, 184, 255, 0.18);
+      font-size: 12px;
+      font-weight: 900;
+      cursor: help;
+      flex: 0 0 auto;
+    }
+
+    .help-pop {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: min(360px, 75vw);
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      box-shadow: 0 18px 32px rgba(34, 65, 102, 0.14);
+      color: #55708e;
+      font-size: 14px;
+      line-height: 1.45;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: 160ms ease;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .help-trigger:hover .help-pop,
+    .help-trigger:focus-visible .help-pop {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .theme-blue {
+      background: linear-gradient(135deg, rgba(225, 243, 252, 0.98), rgba(244, 249, 255, 0.96));
+    }
+
+    .theme-amber {
+      background: linear-gradient(135deg, rgba(255, 246, 225, 0.98), rgba(255, 251, 242, 0.96));
+    }
+
+    .theme-green {
+      background: linear-gradient(135deg, rgba(230, 250, 240, 0.98), rgba(244, 255, 249, 0.96));
+    }
+
+    .theme-rose {
+      background: linear-gradient(135deg, rgba(255, 238, 241, 0.98), rgba(255, 248, 249, 0.96));
+    }
+
+    .theme-cyan {
+      background: linear-gradient(135deg, rgba(231, 249, 250, 0.98), rgba(246, 253, 255, 0.96));
+    }
+
+    .reservation-layout {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .single-column {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel h3 {
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    input, select {
+      color-scheme: light;
+      width: 100%;
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      border-radius: 16px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(46, 184, 255, 0.42);
+      box-shadow: 0 0 0 4px rgba(46, 184, 255, 0.12);
+    }
+
+    button {
+      color-scheme: light;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      color: #0d2942;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 18px 34px rgba(46, 184, 255, 0.18);
+    }
+
+    .secondary {
+      color: #23496e;
+      background: rgba(245, 249, 253, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.1);
+    }
+
+    .danger {
+      color: #a14646;
+      background: rgba(255, 235, 235, 0.92);
+      border: 1px solid rgba(255, 138, 138, 0.2);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .feedback {
+      min-height: 22px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .feedback.success { color: #1d7b56; }
+    .feedback.error { color: #a14646; }
+
+    .plate-lookup-result {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .plate-lookup-card {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(246, 250, 254, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+      display: grid;
+      gap: 12px;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .inventory-grid,
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .inventory-card, .reservation-card, .card {
+      padding: 18px;
+    }
+
+    .inventory-card strong, .reservation-card strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 6px;
+      letter-spacing: -0.04em;
+    }
+
+    .reservation-list, .subscription-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .queue-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .queue-item {
+      display: grid;
+      gap: 12px;
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(248, 251, 255, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .queue-item.checkout-warning {
+      border-color: rgba(255, 207, 102, 0.48);
+      box-shadow: 0 0 0 3px rgba(255, 207, 102, 0.16);
+    }
+
+    .queue-item.checkout-critical {
+      border-color: rgba(255, 138, 138, 0.52);
+      box-shadow: 0 0 0 3px rgba(255, 138, 138, 0.16);
+      animation: checkoutPulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes checkoutPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 138, 138, 0.12);
+      }
+      50% {
+        box-shadow: 0 0 0 5px rgba(255, 138, 138, 0.2);
+      }
+    }
+
+    .queue-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .signal {
+      min-width: 108px;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .signal.green {
+      color: #1d7b56;
+      background: rgba(65, 200, 141, 0.14);
+      border: 1px solid rgba(65, 200, 141, 0.24);
+    }
+
+    .signal.yellow {
+      color: #94640e;
+      background: rgba(255, 207, 102, 0.18);
+      border: 1px solid rgba(255, 207, 102, 0.24);
+    }
+
+    .signal.red {
+      color: #9d4545;
+      background: rgba(255, 138, 138, 0.16);
+      border: 1px solid rgba(255, 138, 138, 0.24);
+    }
+
+    .signal.blue {
+      color: #166993;
+      background: rgba(46, 184, 255, 0.14);
+      border: 1px solid rgba(46, 184, 255, 0.22);
+    }
+
+    .signal.orange {
+      color: #9a5e00;
+      background: rgba(255, 186, 73, 0.18);
+      border: 1px solid rgba(255, 186, 73, 0.26);
+    }
+
+    .timeline-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .timeline-box {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(246, 250, 254, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .timeline-box strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .operator-strip {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 249, 235, 0.96);
+      border: 1px solid rgba(255, 207, 102, 0.2);
+    }
+
+    .operator-strip h4 {
+      font-size: 15px;
+      letter-spacing: -0.02em;
+    }
+
+    .action-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .action-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #315d7d;
+      background: rgba(46, 184, 255, 0.1);
+      border: 1px solid rgba(46, 184, 255, 0.18);
+    }
+
+    .action-badge.warn {
+      color: #94640e;
+      background: rgba(255, 207, 102, 0.18);
+      border-color: rgba(255, 207, 102, 0.24);
+    }
+
+    .action-badge.ok {
+      color: #1d7b56;
+      background: rgba(65, 200, 141, 0.14);
+      border-color: rgba(65, 200, 141, 0.22);
+    }
+
+    .action-badge.danger {
+      color: #9d4545;
+      background: rgba(255, 138, 138, 0.14);
+      border-color: rgba(255, 138, 138, 0.22);
+    }
+
+    .reservation-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .reservation-head, .inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      background: rgba(245, 249, 253, 0.98);
+      color: #355b80;
+    }
+
+    .pill.reserved { border-color: rgba(46, 184, 255, 0.22); color: #166993; }
+    .pill.checked_in { border-color: rgba(65, 200, 141, 0.22); color: #1d7b56; }
+    .pill.completed { border-color: rgba(255, 207, 102, 0.24); color: #94640e; }
+    .pill.no_show { border-color: rgba(255, 138, 138, 0.22); color: #9d4545; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(246, 250, 254, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .mini strong {
+      font-size: 18px;
+    }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(24, 56, 92, 0.14);
+      border-radius: 20px;
+      background: rgba(251, 253, 255, 0.94);
+    }
+
+    .is-loading {
+      opacity: 0.72;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1180px) {
+      .hero, .reservation-layout, .plan-grid, .summary-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app { width: min(100%, calc(100% - 18px)); }
+      .topbar, .statusbar { flex-direction: column; align-items: flex-start; }
+      .api-row, .field-grid, .inventory-grid, .control-grid, .mini-grid, .metrics, .timeline-strip, .summary-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="demo-switcher" aria-label="Alternar visão da demo">
+    <a href="parkflow_driver.html">Driver</a>
+    <a class="active" href="parkflow_ops.html">Parking</a>
+    <a href="parkflow_partner.html">Comercial</a>
+    <a href="parkflow_home.html">Início</a>
+  </nav>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">O</div>
+        <div>
+          <h1>ParkFlow Ops</h1>
+          <p>Painel de reservas, vagas disponíveis e assinaturas para a operação do estacionamento</p>
+        </div>
+      </div>
+      <div class="eyebrow">Ops v1 • reservas e assinaturas</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Reserva em tempo real</span>
+        <h2>Operar a chegada do motorista <span class="accent">sem perder o controle do pátio.</span></h2>
+        <p>Essa tela junta reserva avulsa, consumo de assinatura, inventário por janela e status da chegada para você mostrar o produto funcionando como operação de verdade.</p>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <strong id="metric-reservations">--</strong>
+          <span>Reservas na base</span>
+        </div>
+        <div class="metric">
+          <strong id="metric-subscriptions">--</strong>
+          <span>Assinaturas ativas</span>
+        </div>
+        <div class="metric">
+          <strong id="metric-available">--</strong>
+          <span>Capacidade restante</span>
+        </div>
+        <div class="metric">
+          <strong id="metric-api">API</strong>
+          <span id="metric-api-text">Aguardando conexão</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="statusbar">
+      <span class="chip" id="api-status">Backend não verificado</span>
+      <span class="chip warn">Reserva comum + assinatura + andamento da operação</span>
+      <span class="chip">Painel vivo</span>
+      <span class="flash" id="flash">Pronto para carregar a operação.</span>
+    </section>
+
+    <section class="shell">
+      <div class="api-row">
+        <label>
+          Base da API
+          <input id="apiBase" type="text" value="http://127.0.0.1:8010">
+        </label>
+        <button class="secondary" id="saveBaseBtn" type="button">Salvar Base</button>
+        <button class="primary" id="reloadBtn" type="button">Recarregar Operação</button>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Navegação operacional do ParkFlow">
+        <button class="tab-btn active" type="button" data-tab-target="tab-planos">Planos e Reservas</button>
+        <button class="tab-btn" type="button" data-tab-target="tab-janela">Consulta de Vagas</button>
+        <button class="tab-btn" type="button" data-tab-target="tab-painel">Painel Dinâmico</button>
+        <button class="tab-btn" type="button" data-tab-target="tab-reservas">Reservas em Andamento</button>
+        <button class="tab-btn" type="button" data-tab-target="tab-assinaturas">Assinaturas Ativas</button>
+      </div>
+
+      <div class="tab-panels">
+        <section class="tab-panel active" id="tab-planos">
+          <article class="panel tab-intro theme-blue">
+            <div class="title-row">
+              <h3>Planos e reservas</h3>
+              <span class="help-trigger" tabindex="0">?
+                <span class="help-pop">Aqui fica a entrada das reservas comuns e das reservas feitas com saldo de assinatura, sem misturar com consulta de vagas e fila ao vivo.</span>
+              </span>
+            </div>
+          </article>
+          <div class="reservation-layout">
+            <aside class="panel">
+              <div class="title-row">
+                <h3>Reserva avulsa</h3>
+                <span class="help-trigger" tabindex="0">?
+                  <span class="help-pop">Use esta área para criar uma reserva comum paga pelo motorista, como se a compra tivesse sido feita pelo aplicativo.</span>
+                </span>
+              </div>
+              <form id="oneOffForm">
+                <div class="field-grid">
+                  <label>
+                    Usuário
+                    <select name="user_id" required></select>
+                  </label>
+                  <label>
+                    Veículo
+                    <select name="vehicle_id" required></select>
+                  </label>
+                </div>
+                <div class="field-grid">
+                  <label>
+                    Estacionamento
+                    <select name="parking_id" required></select>
+                  </label>
+                  <label>
+                    Horas
+                    <input name="hours" type="number" min="1" max="24" value="3" required>
+                  </label>
+                </div>
+                <div class="field-grid">
+                  <label>
+                    Início
+                    <input name="start_at" type="datetime-local" required>
+                  </label>
+                  <label>
+                    Fim
+                    <input name="end_at" type="datetime-local" required>
+                  </label>
+                </div>
+                <div class="actions">
+                  <button class="primary" type="submit">Criar Reserva</button>
+                  <button class="secondary" type="button" id="quoteOneOffBtn">Simular Preço</button>
+                </div>
+                <div class="feedback" id="oneOffFeedback"></div>
+              </form>
+            </aside>
+
+            <aside class="panel">
+              <div class="title-row">
+                <h3>Reserva por assinatura</h3>
+                <span class="help-trigger" tabindex="0">?
+                  <span class="help-pop">Use esta área quando o cliente já tiver um plano ou quando a empresa tiver um pacote ativo com saldo disponível.</span>
+                </span>
+              </div>
+              <form id="subscriptionForm">
+                <div class="field-grid">
+                  <label>
+                    Assinatura
+                    <select name="subscription_id" required></select>
+                  </label>
+                  <label>
+                    Veículo
+                    <select name="vehicle_id" required></select>
+                  </label>
+                </div>
+                <div class="field-grid">
+                  <label>
+                    Estacionamento
+                    <select name="parking_id" required></select>
+                  </label>
+                  <label>
+                    Janela
+                    <input name="hours" type="number" min="1" max="24" value="2" required>
+                  </label>
+                </div>
+                <div class="field-grid">
+                  <label>
+                    Início
+                    <input name="start_at" type="datetime-local" required>
+                  </label>
+                  <label>
+                    Fim
+                    <input name="end_at" type="datetime-local" required>
+                  </label>
+                </div>
+                <div class="actions">
+                  <button class="primary" type="submit">Consumir Saldo</button>
+                  <button class="secondary" type="button" id="quoteSubscriptionBtn">Ver Valor Unitário</button>
+                </div>
+                <div class="feedback" id="subscriptionFeedback"></div>
+              </form>
+            </aside>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="tab-janela">
+          <article class="panel tab-intro theme-amber">
+            <div class="title-row">
+              <h3>Consulta de vagas</h3>
+              <span class="help-trigger" tabindex="0">?
+                <span class="help-pop">Essa aba serve só para conferir vagas disponíveis no período escolhido, sem misturar com outras partes da operação.</span>
+              </span>
+            </div>
+          </article>
+          <div class="single-column">
+            <aside class="panel">
+              <div class="title-row">
+                <h3>Consultar vagas</h3>
+                <span class="help-trigger" tabindex="0">?
+                  <span class="help-pop">Faça a consulta antes de prometer uma vaga, para saber quanto espaço ainda existe naquele horário.</span>
+                </span>
+              </div>
+              <form id="inventoryForm">
+                <div class="field-grid">
+                  <label>
+                    Estacionamento
+                    <select name="parking_id" required></select>
+                </label>
+                  <label>
+                    Início
+                    <input name="start_at" type="datetime-local" required>
+                  </label>
+                </div>
+                <label>
+                  Duração da vaga
+                  <select name="duration_hours" required>
+                    <option value="1">1 hora</option>
+                    <option value="2">2 horas</option>
+                    <option value="3" selected>3 horas</option>
+                    <option value="4">4 horas</option>
+                    <option value="6">6 horas</option>
+                    <option value="8">8 horas</option>
+                    <option value="12">12 horas</option>
+                    <option value="24">24 horas</option>
+                  </select>
+                </label>
+                <div class="actions">
+                  <button class="secondary" type="submit">Consultar Vagas</button>
+                </div>
+                <div class="feedback" id="inventoryFeedback"></div>
+              </form>
+          </aside>
+
+            <section class="panel">
+              <div class="inline">
+                <div>
+                  <div class="title-row">
+                    <h3>Resultado da consulta</h3>
+                    <span class="help-trigger" tabindex="0">?
+                      <span class="help-pop">Aqui aparece o resumo das vagas restantes e das reservas já ocupando espaço no mesmo período.</span>
+                    </span>
+                    <span class="help-trigger" tabindex="0">i
+                      <span class="help-pop">A consulta considera apenas reservas que realmente ocupam o horário pesquisado. Se a permanência já terminou antes desse horário, ela não entra na conta.</span>
+                    </span>
+                  </div>
+                </div>
+                <span class="chip warn" id="inventoryWindow">Sem consulta ainda</span>
+              </div>
+              <div class="inventory-grid" id="inventoryGrid">
+                <div class="empty">Faça uma consulta de inventário para ver capacidade, reservas sobrepostas e margem operacional.</div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="tab-painel">
+          <article class="panel tab-intro theme-green">
+            <div class="title-row">
+              <h3>Painel ao vivo do estacionamento</h3>
+              <span class="help-trigger" tabindex="0">?
+                <span class="help-pop">Essa é a tela para acompanhar a operação em tempo real, vendo quem chega primeiro e quais reservas pedem mais atenção.</span>
+              </span>
+            </div>
+          </article>
+          <section class="panel">
+            <div class="inline">
+              <div>
+                <div class="title-row">
+                  <h3>Farol de atendimento</h3>
+                  <span class="help-trigger" tabindex="0">?
+                    <span class="help-pop">Use o farol para priorizar a operação: verde acompanha, amarelo prepara e vermelho pede ação imediata.</span>
+                  </span>
+                </div>
+              </div>
+              <span class="chip" id="liveClock">--:--</span>
+            </div>
+            <div class="control-grid" style="margin-top:16px;">
+              <article class="inventory-card">
+                <label>
+                  Estacionamento acompanhado
+                  <select id="opsParkingFilter"></select>
+                </label>
+              </article>
+              <article class="inventory-card">
+                <label>
+                  Buscar por placa
+                  <input id="plateLookupInput" type="text" value="RTA-5H47" placeholder="ABC-1D23">
+                </label>
+                <div class="actions" style="margin-top:12px;">
+                  <button class="secondary" type="button" id="plateLookupBtn">Localizar</button>
+                </div>
+              </article>
+              <article class="inventory-card">
+                <strong id="opsInPatioCount">--</strong>
+                <span class="muted">Carros no pátio</span>
+              </article>
+              <article class="inventory-card">
+                <strong id="opsNextArrival">--</strong>
+                <span class="muted">Próxima chegada</span>
+              </article>
+              <article class="inventory-card">
+                <strong id="opsUpcomingCount">--</strong>
+                <span class="muted">Entradas próximas</span>
+              </article>
+              <article class="inventory-card">
+                <strong id="opsCriticalCount">--</strong>
+                <span class="muted">Chegadas que pedem atenção</span>
+              </article>
+              <article class="inventory-card">
+                <strong id="opsCheckoutCount">--</strong>
+                <span class="muted">Saídas que pedem atenção</span>
+              </article>
+              <article class="inventory-card">
+                <strong id="opsPendingActionCount">--</strong>
+                <span class="muted">Atrasos sem tratativa</span>
+              </article>
+            </div>
+            <div class="plate-lookup-result" id="plateLookupResult">
+              <div class="empty">Digite a placa para localizar a reserva ativa e confirmar a entrada.</div>
+            </div>
+            <div class="queue-list" id="opsQueueList">
+              <div class="empty">Selecione um estacionamento para acompanhar a agenda ao vivo.</div>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="tab-reservas">
+          <article class="panel tab-intro theme-rose">
+            <div class="title-row">
+              <h3>Reservas em andamento</h3>
+              <span class="help-trigger" tabindex="0">?
+                <span class="help-pop">Aqui você acompanha as reservas já criadas, o valor delas e a próxima ação da operação.</span>
+              </span>
+            </div>
+          </article>
+          <section class="panel">
+            <div class="inline">
+              <div>
+                <div class="title-row">
+                  <h3>Fila de reservas</h3>
+                  <span class="help-trigger" tabindex="0">?
+                    <span class="help-pop">Use essa fila para confirmar entrada, finalizar a reserva ou marcar quando o cliente não apareceu.</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="reservation-list" id="reservationList"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="tab-assinaturas">
+          <article class="panel tab-intro theme-cyan">
+            <div class="title-row">
+              <h3>Assinaturas ativas</h3>
+              <span class="help-trigger" tabindex="0">?
+                <span class="help-pop">Essa área mostra os clientes e empresas com saldo disponível em planos ativos.</span>
+              </span>
+            </div>
+          </article>
+          <div class="single-column">
+            <section class="panel">
+              <div class="inline">
+                <div>
+                  <div class="title-row">
+                    <h3>Contas com saldo disponível</h3>
+                    <span class="help-trigger" tabindex="0">?
+                      <span class="help-pop">Aqui você confere rapidamente quem ainda tem saldo para usar sem precisar abrir a reserva.</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="subscription-list" id="subscriptionList"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const storageKey = "parkflow-ops-api-base";
+    const state = {
+      apiBase: localStorage.getItem(storageKey) || "http://127.0.0.1:8010",
+      catalog: { parkings: [], users: [], vehicles: [] },
+      reservations: [],
+      subscriptions: [],
+      inventory: null,
+      selectedParkingId: "",
+      plateLookup: null,
+    };
+
+    const apiBaseInput = document.getElementById("apiBase");
+    const saveBaseBtn = document.getElementById("saveBaseBtn");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const apiStatus = document.getElementById("api-status");
+    const flash = document.getElementById("flash");
+    const metricReservations = document.getElementById("metric-reservations");
+    const metricSubscriptions = document.getElementById("metric-subscriptions");
+    const metricAvailable = document.getElementById("metric-available");
+    const metricApiText = document.getElementById("metric-api-text");
+    const tabButtons = Array.from(document.querySelectorAll("[data-tab-target]"));
+    const tabPanels = Array.from(document.querySelectorAll(".tab-panel"));
+
+    apiBaseInput.value = state.apiBase;
+
+    function setFlash(message, tone = "default") {
+      flash.textContent = message;
+      apiStatus.className = "chip";
+      if (tone === "warn") apiStatus.classList.add("warn");
+      if (tone === "error") apiStatus.classList.add("error");
+    }
+
+    function setFeedback(id, message = "", tone = "default") {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.textContent = message;
+      element.className = "feedback";
+      if (tone === "success") element.classList.add("success");
+      if (tone === "error") element.classList.add("error");
+    }
+
+    function setSubmitting(form, isSubmitting, label) {
+      const button = form.querySelector('button[type="submit"]');
+      if (!button) return;
+      if (!button.dataset.defaultLabel) {
+        button.dataset.defaultLabel = button.textContent;
+      }
+      button.disabled = isSubmitting;
+      button.textContent = isSubmitting ? label : button.dataset.defaultLabel;
+      form.classList.toggle("is-loading", isSubmitting);
+    }
+
+    function activateTab(tabId) {
+      tabButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.tabTarget === tabId);
+      });
+      tabPanels.forEach((panel) => {
+        panel.classList.toggle("active", panel.id === tabId);
+      });
+    }
+
+    function toApiDateTime(value) {
+      if (!value) return "";
+      return `${value}:00`;
+    }
+
+    function dateToApiDateTime(date) {
+      return `${toLocalDateTimeInput(date)}:00`;
+    }
+
+    function toLocalDateTimeInput(date) {
+      const pad = (value) => String(value).padStart(2, "0");
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function setDefaultTimes() {
+      const now = new Date();
+      now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15, 0, 0);
+      const later = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+      const laterThree = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+      document.querySelectorAll('input[name="start_at"]').forEach((input) => { input.value = toLocalDateTimeInput(now); });
+      document.getElementById("oneOffForm").elements.namedItem("end_at").value = toLocalDateTimeInput(laterThree);
+      document.getElementById("subscriptionForm").elements.namedItem("end_at").value = toLocalDateTimeInput(later);
+      document.getElementById("inventoryForm").elements.namedItem("duration_hours").value = "3";
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${state.apiBase}${path}`, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || `Erro HTTP ${response.status}`);
+      }
+      return data;
+    }
+
+    function updateMetrics() {
+      metricReservations.textContent = state.reservations.length;
+      metricSubscriptions.textContent = state.subscriptions.filter((item) => item.active).length;
+      if (state.selectedParkingId) {
+        const activeForParking = state.reservations.filter((item) => item.parking_id === state.selectedParkingId && ["reserved", "checked_in"].includes(item.status)).length;
+        const parking = findParking(state.selectedParkingId);
+        metricAvailable.textContent = parking ? Math.max(parking.capacity_digital - activeForParking, 0) : "--";
+      } else {
+        metricAvailable.textContent = state.inventory ? state.inventory.remaining_capacity : "--";
+      }
+      metricApiText.textContent = state.apiBase;
+    }
+
+    function vehicleLabel(vehicle) {
+      return `${vehicle.plate} • ${vehicle.model}`;
+    }
+
+    function userLabel(user) {
+      return `${user.full_name} • ${user.region}`;
+    }
+
+    function parkingLabel(parking) {
+      return `${parking.name} • ${parking.region}`;
+    }
+
+    function formatDateTime(value) {
+      return new Date(value).toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    function getUserVehicles(userId) {
+      return state.catalog.vehicles.filter((vehicle) => vehicle.user_id === userId);
+    }
+
+    function renderSelectOptions(select, items, getValue, getLabel, placeholder) {
+      const previous = select.value;
+      select.innerHTML = items.length
+        ? items.map((item) => `<option value="${getValue(item)}">${getLabel(item)}</option>`).join("")
+        : `<option value="">${placeholder}</option>`;
+      if (items.some((item) => getValue(item) === previous)) {
+        select.value = previous;
+      }
+    }
+
+    function syncVehicleSelect(formId, userId) {
+      const form = document.getElementById(formId);
+      const select = form.elements.namedItem("vehicle_id");
+      const vehicles = getUserVehicles(userId);
+      renderSelectOptions(select, vehicles, (item) => item.id, vehicleLabel, "Sem veículo");
+    }
+
+    function populateForms() {
+      const users = state.catalog.users;
+      const parkings = state.catalog.parkings;
+      const oneOffForm = document.getElementById("oneOffForm");
+      const oneOffUsers = oneOffForm.elements.namedItem("user_id");
+      renderSelectOptions(oneOffUsers, users, (item) => item.id, userLabel, "Sem usuário");
+      syncVehicleSelect("oneOffForm", oneOffUsers.value);
+
+      const parkingsSelects = [
+        oneOffForm.elements.namedItem("parking_id"),
+        document.getElementById("subscriptionForm").elements.namedItem("parking_id"),
+        document.getElementById("inventoryForm").elements.namedItem("parking_id"),
+      ];
+      parkingsSelects.forEach((select) => {
+        renderSelectOptions(select, parkings, (item) => item.id, parkingLabel, "Sem estacionamento");
+      });
+      const opsParkingFilter = document.getElementById("opsParkingFilter");
+      renderSelectOptions(opsParkingFilter, parkings, (item) => item.id, parkingLabel, "Sem estacionamento");
+      if (!state.selectedParkingId && parkings.length) {
+        state.selectedParkingId = parkings[0].id;
+      }
+      if (state.selectedParkingId) {
+        opsParkingFilter.value = state.selectedParkingId;
+      }
+
+      const subscriptions = state.subscriptions.filter((item) => item.active);
+      const subscriptionSelect = document.getElementById("subscriptionForm").elements.namedItem("subscription_id");
+      renderSelectOptions(subscriptionSelect, subscriptions, (item) => item.id, (item) => {
+        const planName = findPlanName(item.plan_id);
+        const user = state.catalog.users.find((entry) => entry.id === item.user_id);
+        return `${planName} • ${user ? user.full_name : item.user_id} • saldo ${item.remaining_reservations}`;
+      }, "Sem assinatura");
+      syncSubscriptionVehicle();
+    }
+
+    function findParking(parkingId) {
+      return state.catalog.parkings.find((item) => item.id === parkingId);
+    }
+
+    function findUser(userId) {
+      return state.catalog.users.find((item) => item.id === userId);
+    }
+
+    function findVehicle(vehicleId) {
+      return state.catalog.vehicles.find((item) => item.id === vehicleId);
+    }
+
+    function findPlanName(planId) {
+      const cache = [...(state.pricingPlans || [])];
+      const plan = cache.find((item) => item.id === planId);
+      return plan ? plan.name : planId;
+    }
+
+    function getStatusLabel(status) {
+      const map = {
+        reserved: "Reservada",
+        checked_in: "Entrada confirmada",
+        completed: "Finalizada",
+        no_show: "Ausente",
+      };
+      return map[status] || status;
+    }
+
+    function renderPlateLookup() {
+      const root = document.getElementById("plateLookupResult");
+      if (!state.plateLookup) {
+        root.innerHTML = `<div class="empty">Digite a placa para localizar a reserva ativa e confirmar a entrada.</div>`;
+        return;
+      }
+      if (!state.plateLookup.reservations.length) {
+        root.innerHTML = `<div class="empty">Nenhuma reserva ativa encontrada para ${state.plateLookup.plate}.</div>`;
+        return;
+      }
+      root.innerHTML = state.plateLookup.reservations.map((reservation) => {
+        const user = findUser(reservation.user_id);
+        const vehicle = findVehicle(reservation.vehicle_id);
+        const parking = findParking(reservation.parking_id);
+        return `
+          <article class="plate-lookup-card">
+            <div class="reservation-head">
+              <div>
+                <h4>${vehicle ? vehicle.plate : state.plateLookup.plate} • ${user ? user.full_name : reservation.user_id}</h4>
+                <p class="muted">${parking ? parking.name : reservation.parking_id} • ${formatDateTime(reservation.start_at)} até ${formatDateTime(reservation.end_at)}</p>
+              </div>
+              <span class="pill ${reservation.status}">${getStatusLabel(reservation.status)}</span>
+            </div>
+            <div class="meta">
+              <span class="pill">${reservation.id}</span>
+              <span class="pill">${vehicle ? vehicle.model : reservation.vehicle_id}</span>
+              <span class="pill">${reservation.revenue_type}</span>
+            </div>
+            <div class="actions">
+              ${reservation.status === "reserved" ? `<button class="primary" type="button" onclick="reservationAction('checkin', '${reservation.id}')">Confirmar Entrada por Placa</button>` : ""}
+              ${["reserved", "checked_in"].includes(reservation.status) ? `<button class="secondary" type="button" onclick="reservationAction('complete', '${reservation.id}')">Finalizar</button>` : ""}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function syncSubscriptionVehicle() {
+      const form = document.getElementById("subscriptionForm");
+      const subscriptionId = form.elements.namedItem("subscription_id").value;
+      const subscription = state.subscriptions.find((item) => item.id === subscriptionId);
+      const vehicleSelect = form.elements.namedItem("vehicle_id");
+      const vehicles = subscription ? getUserVehicles(subscription.user_id) : [];
+      renderSelectOptions(vehicleSelect, vehicles, (item) => item.id, vehicleLabel, "Sem veículo");
+    }
+
+    function renderInventory() {
+      const root = document.getElementById("inventoryGrid");
+      const badge = document.getElementById("inventoryWindow");
+      if (!state.inventory) {
+        root.innerHTML = `<div class="empty">Faça uma consulta para ver vagas disponíveis, reservas no mesmo horário e espaço restante.</div>`;
+        badge.textContent = "Sem consulta ainda";
+        return;
+      }
+      const parking = state.inventory.parking;
+      badge.textContent = `${parking.name} • entrada ${formatDateTime(state.inventory.window.start_at)} • saída ${formatDateTime(state.inventory.window.end_at)}`;
+      root.innerHTML = `
+        <article class="inventory-card">
+          <strong>${state.inventory.remaining_capacity_at_start}</strong>
+          <span class="muted">Vagas livres na entrada</span>
+        </article>
+        <article class="inventory-card">
+          <strong>${state.inventory.active_at_start_count}</strong>
+          <span class="muted">Carros ocupando vaga no check-in</span>
+        </article>
+        <article class="inventory-card">
+          <strong>${state.inventory.remaining_capacity}</strong>
+          <span class="muted">Vagas livres no período pesquisado</span>
+        </article>
+        <article class="inventory-card">
+          <strong>${state.inventory.reserved_count}</strong>
+          <span class="muted">Reservas que batem com o intervalo</span>
+        </article>
+        <article class="inventory-card">
+          <strong>${parking.capacity_digital}</strong>
+          <span class="muted">Total de vagas digitais</span>
+        </article>
+        <article class="inventory-card">
+          <strong>Entrada é prioridade</strong>
+          <span class="muted">A busca localiza pela chegada, mas protege a vaga até a saída.</span>
+        </article>
+      `;
+    }
+
+    function renderSubscriptions() {
+      const root = document.getElementById("subscriptionList");
+      if (!state.subscriptions.length) {
+        root.innerHTML = `<div class="empty">Sem assinaturas ativas na base.</div>`;
+        return;
+      }
+      root.innerHTML = state.subscriptions
+        .slice()
+        .sort((a, b) => b.remaining_reservations - a.remaining_reservations)
+        .map((subscription) => {
+          const user = findUser(subscription.user_id);
+          return `
+            <article class="card">
+              <div class="reservation-head">
+                <div>
+                  <h4>${findPlanName(subscription.plan_id)}</h4>
+                  <p class="muted">${user ? user.full_name : subscription.user_id} • renova ${formatDateTime(subscription.renews_at)}</p>
+                </div>
+                <span class="pill ${subscription.active ? "checked_in" : "no_show"}">${subscription.active ? "ativa" : "inativa"}</span>
+              </div>
+              <div class="mini-grid">
+                <div class="mini"><strong>${subscription.remaining_reservations}</strong><span class="muted">Saldo restante</span></div>
+                <div class="mini"><strong>${subscription.company_name || "Pessoal"}</strong><span class="muted">Tipo de conta</span></div>
+                <div class="mini"><strong>${subscription.id}</strong><span class="muted">Código da assinatura</span></div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    function getSignalForReservation(reservation) {
+      const diffMinutes = Math.round((new Date(reservation.start_at).getTime() - Date.now()) / 60000);
+      if (reservation.status === "checked_in") {
+        return { tone: "blue", label: "no patio", minutes: diffMinutes };
+      }
+      if (reservation.status === "completed") {
+        return { tone: "green", label: "concluida", minutes: diffMinutes };
+      }
+      if (reservation.status === "no_show") {
+        return { tone: "red", label: "ausência", minutes: diffMinutes };
+      }
+      if (diffMinutes <= 10) {
+        return { tone: "red", label: diffMinutes < 0 ? "atrasado" : "chegada iminente", minutes: diffMinutes };
+      }
+      if (diffMinutes <= 35) {
+        return { tone: "yellow", label: "atenção", minutes: diffMinutes };
+      }
+      return { tone: "green", label: "folga", minutes: diffMinutes };
+    }
+
+    function getCheckoutSignal(reservation) {
+      if (!["reserved", "checked_in"].includes(reservation.status)) {
+        return null;
+      }
+      const diffMinutes = Math.round((new Date(reservation.end_at).getTime() - Date.now()) / 60000);
+      if (diffMinutes <= 0) {
+        return {
+          tone: "red",
+          label: "tempo encerrado",
+          text: `${Math.abs(diffMinutes)} min excedidos`,
+          cardClass: "checkout-critical",
+        };
+      }
+      if (diffMinutes <= 15) {
+        return {
+          tone: "red",
+          label: "saída urgente",
+          text: `${diffMinutes} min para encerrar`,
+          cardClass: "checkout-critical",
+        };
+      }
+      if (diffMinutes <= 30) {
+        return {
+          tone: "orange",
+          label: "saída próxima",
+          text: `${diffMinutes} min para encerrar`,
+          cardClass: "checkout-warning",
+        };
+      }
+      return null;
+    }
+
+    function getActionBadges(reservation) {
+      const notes = reservation.notes || "";
+      const badges = [];
+      if (notes.includes("acionou o dono")) {
+        badges.push({ label: "Cliente acionado", tone: "ok" });
+      }
+      if (notes.includes("acompanhamento de atraso")) {
+        badges.push({ label: "Atraso acompanhado", tone: "warn" });
+      }
+      if (notes.includes("+1 hora pendente")) {
+        badges.push({ label: "Hora extra lançada", tone: "danger" });
+      }
+      if (notes.includes("ciente da hora adicional")) {
+        badges.push({ label: "Cliente ciente", tone: "ok" });
+      }
+      return badges;
+    }
+
+    function hasDelayTreatment(reservation) {
+      return getActionBadges(reservation).some((badge) =>
+        ["Cliente acionado", "Atraso acompanhado", "Hora extra lançada", "Cliente ciente"].includes(badge.label)
+      );
+    }
+
+    function renderRealtimeBoard() {
+      const root = document.getElementById("opsQueueList");
+      const nextArrival = document.getElementById("opsNextArrival");
+      const inPatioCount = document.getElementById("opsInPatioCount");
+      const upcomingCount = document.getElementById("opsUpcomingCount");
+      const criticalCount = document.getElementById("opsCriticalCount");
+      const checkoutCount = document.getElementById("opsCheckoutCount");
+      const pendingActionCount = document.getElementById("opsPendingActionCount");
+      const clock = document.getElementById("liveClock");
+      clock.textContent = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+      if (!state.selectedParkingId) {
+        root.innerHTML = `<div class="empty">Selecione um estacionamento para acompanhar a agenda ao vivo.</div>`;
+        nextArrival.textContent = "--";
+        inPatioCount.textContent = "--";
+        upcomingCount.textContent = "--";
+        criticalCount.textContent = "--";
+        checkoutCount.textContent = "--";
+        pendingActionCount.textContent = "--";
+        return;
+      }
+
+      const reservations = state.reservations
+        .filter((item) => item.parking_id === state.selectedParkingId)
+        .slice()
+        .sort((a, b) => new Date(a.start_at) - new Date(b.start_at));
+
+      if (!reservations.length) {
+        root.innerHTML = `<div class="empty">Nenhuma reserva encontrada para este estacionamento.</div>`;
+        nextArrival.textContent = "--";
+        inPatioCount.textContent = "0";
+        upcomingCount.textContent = "0";
+        criticalCount.textContent = "0";
+        checkoutCount.textContent = "0";
+        pendingActionCount.textContent = "0";
+        return;
+      }
+
+      const active = reservations.filter((item) => ["reserved", "checked_in"].includes(item.status));
+      const upcoming = active.filter((item) => new Date(item.start_at).getTime() >= Date.now()).sort((a, b) => new Date(a.start_at) - new Date(b.start_at));
+      nextArrival.textContent = upcoming.length ? formatDateTime(upcoming[0].start_at) : "sem nova chegada";
+      inPatioCount.textContent = active.filter((item) => item.status === "checked_in").length;
+      upcomingCount.textContent = upcoming.filter((item) => {
+        const diffMinutes = Math.round((new Date(item.start_at).getTime() - Date.now()) / 60000);
+        return diffMinutes <= 60;
+      }).length;
+      criticalCount.textContent = active.filter((item) => {
+        const signal = getSignalForReservation(item);
+        return signal.tone === "yellow" || signal.tone === "red";
+      }).length;
+      checkoutCount.textContent = active.filter((item) => {
+        const signal = getCheckoutSignal(item);
+        return signal && (signal.tone === "orange" || signal.tone === "red");
+      }).length;
+      pendingActionCount.textContent = active.filter((item) => {
+        const signal = getCheckoutSignal(item);
+        return signal && signal.tone === "red" && !hasDelayTreatment(item);
+      }).length;
+
+      root.innerHTML = reservations.map((reservation) => {
+        const user = findUser(reservation.user_id);
+        const vehicle = findVehicle(reservation.vehicle_id);
+        const signal = getSignalForReservation(reservation);
+        const checkoutSignal = getCheckoutSignal(reservation);
+        const actionBadges = getActionBadges(reservation);
+        const diffText = signal.minutes < 0 ? `${Math.abs(signal.minutes)} min de atraso` : `${signal.minutes} min para chegada`;
+        return `
+          <article class="queue-item ${checkoutSignal ? checkoutSignal.cardClass : ""}">
+            <div class="queue-head">
+              <div>
+                <strong>${user ? user.full_name : reservation.user_id}</strong>
+                <p class="muted">${vehicle ? vehicleLabel(vehicle) : reservation.vehicle_id} • ${reservation.id}</p>
+              </div>
+              <div style="display:grid; gap:8px; justify-items:end;">
+                <span class="signal ${signal.tone}">${signal.label}</span>
+                ${checkoutSignal ? `<span class="signal ${checkoutSignal.tone}">${checkoutSignal.label}</span>` : ""}
+              </div>
+            </div>
+            <div class="meta">
+              <span class="pill ${reservation.status}">${getStatusLabel(reservation.status)}</span>
+              <span class="pill">${reservation.revenue_type}</span>
+              <span class="pill">${formatDateTime(reservation.start_at)}</span>
+            </div>
+            ${actionBadges.length ? `
+              <div class="action-badges">
+                ${actionBadges.map((badge) => `<span class="action-badge ${badge.tone}">${badge.label}</span>`).join("")}
+              </div>
+            ` : ""}
+            <div class="timeline-strip">
+              <div class="timeline-box">
+                <strong>Chegada</strong>
+                <span class="muted">${formatDateTime(reservation.start_at)}</span>
+              </div>
+              <div class="timeline-box">
+                <strong>Saída prevista</strong>
+                <span class="muted">${formatDateTime(reservation.end_at)}</span>
+              </div>
+              <div class="timeline-box">
+                <strong>Farol</strong>
+                <span class="muted">${diffText}</span>
+              </div>
+              <div class="timeline-box">
+                <strong>O que fazer</strong>
+                <span class="muted">${checkoutSignal ? checkoutSignal.text : signal.tone === "red" ? "atender agora" : signal.tone === "yellow" ? "preparar chegada" : "acompanhar"}</span>
+              </div>
+            </div>
+            ${checkoutSignal ? `
+              <div class="operator-strip">
+                <h4>Ações rápidas para atraso ou saída próxima</h4>
+                <div class="actions">
+                  <button class="secondary" type="button" onclick="operatorReservationAction('call_owner', '${reservation.id}')">Ligar para o dono</button>
+                  <button class="secondary" type="button" onclick="operatorReservationAction('delay_followup', '${reservation.id}')">Registrar atraso</button>
+                  <button class="danger" type="button" onclick="operatorReservationAction('add_pending_hour', '${reservation.id}')">Adicionar +1 hora pendente</button>
+                  <button class="primary" type="button" onclick="operatorReservationAction('owner_acknowledged_extra_hour', '${reservation.id}')">Cliente ciente da hora extra</button>
+                </div>
+                ${reservation.notes ? `<span class="muted">${reservation.notes}</span>` : `<span class="muted">Sem registro operacional ainda para este caso.</span>`}
+              </div>
+            ` : ""}
+            <div class="actions">
+              ${reservation.status === "reserved" ? `<button class="secondary" type="button" onclick="reservationAction('checkin', '${reservation.id}')">Confirmar Entrada</button>` : ""}
+              ${["reserved", "checked_in"].includes(reservation.status) ? `<button class="primary" type="button" onclick="reservationAction('complete', '${reservation.id}')">Finalizar</button>` : ""}
+              ${reservation.status === "reserved" ? `<button class="danger" type="button" onclick="reservationAction('noshow', '${reservation.id}')">Marcar Ausência</button>` : ""}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderReservations() {
+      const root = document.getElementById("reservationList");
+      if (!state.reservations.length) {
+        root.innerHTML = `<div class="empty">Nenhuma reserva criada ainda.</div>`;
+        return;
+      }
+      root.innerHTML = state.reservations
+        .slice()
+        .sort((a, b) => new Date(b.start_at) - new Date(a.start_at))
+        .map((reservation) => {
+          const user = findUser(reservation.user_id);
+          const vehicle = findVehicle(reservation.vehicle_id);
+          const parking = findParking(reservation.parking_id);
+          return `
+            <article class="reservation-card">
+              <div class="reservation-head">
+                <div>
+                  <h4>${parking ? parking.name : reservation.parking_id}</h4>
+                  <p class="muted">${user ? user.full_name : reservation.user_id} • ${vehicle ? vehicleLabel(vehicle) : reservation.vehicle_id}</p>
+                </div>
+                <span class="pill ${reservation.status}">${getStatusLabel(reservation.status)}</span>
+              </div>
+              <div class="meta">
+                <span class="pill">${reservation.id}</span>
+                <span class="pill">${reservation.revenue_type}</span>
+                <span class="pill">${formatDateTime(reservation.start_at)} até ${formatDateTime(reservation.end_at)}</span>
+                ${reservation.source_plan_id ? `<span class="pill">${reservation.source_plan_id}</span>` : ""}
+              </div>
+              <div class="mini-grid">
+                <div class="mini"><strong>R$ ${Number(reservation.gross_revenue).toFixed(2)}</strong><span class="muted">Receita</span></div>
+                <div class="mini"><strong>R$ ${Number(reservation.direct_cost).toFixed(2)}</strong><span class="muted">Custo direto</span></div>
+                <div class="mini"><strong>R$ ${Number(reservation.gross_margin).toFixed(2)}</strong><span class="muted">Sobra da operação</span></div>
+              </div>
+              <div class="actions">
+                ${reservation.status === "reserved" ? `<button class="secondary" type="button" onclick="reservationAction('checkin', '${reservation.id}')">Confirmar Entrada</button>` : ""}
+                ${["reserved", "checked_in"].includes(reservation.status) ? `<button class="primary" type="button" onclick="reservationAction('complete', '${reservation.id}')">Finalizar</button>` : ""}
+                ${reservation.status === "reserved" ? `<button class="danger" type="button" onclick="reservationAction('noshow', '${reservation.id}')">Marcar Ausência</button>` : ""}
+              </div>
+              ${reservation.notes ? `<span class="muted">${reservation.notes}</span>` : ""}
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    function renderAll() {
+      updateMetrics();
+      populateForms();
+      renderInventory();
+      renderRealtimeBoard();
+      renderPlateLookup();
+      renderSubscriptions();
+      renderReservations();
+    }
+
+    async function loadAll() {
+      const [health, catalog, subscriptionsRes, reservationsRes, pricingPlans] = await Promise.all([
+        api("/health"),
+        api("/catalog"),
+        api("/subscriptions"),
+        api("/reservations"),
+        api("/pricing/plans"),
+      ]);
+      state.catalog = {
+        parkings: catalog.parkings || [],
+        users: catalog.users || [],
+        vehicles: catalog.vehicles || [],
+      };
+      state.subscriptions = subscriptionsRes.subscriptions || [];
+      state.reservations = reservationsRes.reservations || [];
+      state.pricingPlans = [
+        ...(pricingPlans.personal || []),
+        ...(pricingPlans.corporate || []),
+        ...(pricingPlans.operator || []),
+      ];
+      apiStatus.textContent = `API online • ${health.project}`;
+      setFlash("Operação carregada com sucesso.");
+      renderAll();
+    }
+
+    async function loadAllWithRetry(attempts = 3) {
+      let lastError = null;
+      for (let attempt = 1; attempt <= attempts; attempt += 1) {
+        try {
+          if (attempt > 1) {
+            setFlash(`Tentando reconectar a operação... ${attempt}/${attempts}`, "warn");
+            await new Promise((resolve) => setTimeout(resolve, 450));
+          }
+          await loadAll();
+          return;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      apiStatus.textContent = "Falha ao conectar API";
+      setFlash(lastError ? lastError.message : "Falha ao carregar operação.", "error");
+    }
+
+    async function refreshInventoryFromForm() {
+      const form = document.getElementById("inventoryForm");
+      const parkingId = form.elements.namedItem("parking_id").value;
+      const startValue = form.elements.namedItem("start_at").value;
+      const durationHours = Number(form.elements.namedItem("duration_hours").value || "3");
+      const startDate = new Date(startValue);
+      const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);
+      const startAt = toApiDateTime(startValue);
+      const endAt = dateToApiDateTime(endDate);
+      state.inventory = await api(`/inventory?parking_id=${encodeURIComponent(parkingId)}&start_at=${encodeURIComponent(startAt)}&end_at=${encodeURIComponent(endAt)}`);
+      renderInventory();
+      updateMetrics();
+    }
+
+    async function refreshInventoryIfVisible() {
+      const form = document.getElementById("inventoryForm");
+      const parkingId = form.elements.namedItem("parking_id").value;
+      const startValue = form.elements.namedItem("start_at").value;
+      if (!parkingId || !startValue) return;
+      try {
+        await refreshInventoryFromForm();
+      } catch (error) {
+        setFlash(`Operação atualizada, mas a consulta de vagas não recarregou: ${error.message}`, "warn");
+      }
+    }
+
+    window.reservationAction = async (action, reservationId) => {
+      const endpoints = {
+        checkin: "/reservations/check-in",
+        complete: "/reservations/complete",
+        noshow: "/reservations/no-show",
+      };
+      const payload = { reservation_id: reservationId };
+      if (action === "noshow") {
+        payload.now_at = dateToApiDateTime(new Date(Date.now() + 30 * 60 * 1000));
+      }
+      try {
+        await api(endpoints[action], {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        await loadAllWithRetry(2);
+        await refreshInventoryIfVisible();
+        setFlash(`Reserva ${reservationId} atualizada.`);
+      } catch (error) {
+        setFlash(error.message, "error");
+      }
+    };
+
+    window.operatorReservationAction = async (action, reservationId) => {
+      try {
+        const result = await api("/reservations/operator-action", {
+          method: "POST",
+          body: JSON.stringify({
+            reservation_id: reservationId,
+            action,
+          }),
+        });
+        await loadAllWithRetry(2);
+        await refreshInventoryIfVisible();
+        setFlash(result.message || `Ação operacional aplicada na reserva ${reservationId}.`);
+      } catch (error) {
+        setFlash(error.message, "error");
+      }
+    };
+
+    document.getElementById("oneOffForm").elements.namedItem("user_id").addEventListener("change", (event) => {
+      syncVehicleSelect("oneOffForm", event.target.value);
+    });
+
+    document.getElementById("subscriptionForm").elements.namedItem("subscription_id").addEventListener("change", () => {
+      syncSubscriptionVehicle();
+    });
+
+    document.getElementById("opsParkingFilter").addEventListener("change", (event) => {
+      state.selectedParkingId = event.target.value;
+      updateMetrics();
+      renderRealtimeBoard();
+    });
+
+    document.getElementById("plateLookupBtn").addEventListener("click", async () => {
+      const input = document.getElementById("plateLookupInput");
+      try {
+        const result = await api(`/reservations/by-plate?plate=${encodeURIComponent(input.value)}&active_only=true`);
+        state.plateLookup = result;
+        renderPlateLookup();
+        setFlash(result.reservations.length ? `Reserva localizada para ${result.plate}.` : `Nenhuma reserva ativa para ${result.plate}.`, result.reservations.length ? "default" : "warn");
+      } catch (error) {
+        state.plateLookup = null;
+        renderPlateLookup();
+        setFlash(error.message, "error");
+      }
+    });
+
+    document.getElementById("inventoryForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        await refreshInventoryFromForm();
+        setFeedback("inventoryFeedback", "Consulta feita com foco na entrada e no período pesquisado.", "success");
+      } catch (error) {
+        setFeedback("inventoryFeedback", error.message, "error");
+        setFlash(error.message, "error");
+      }
+    });
+
+    document.getElementById("quoteOneOffBtn").addEventListener("click", async () => {
+      const form = document.getElementById("oneOffForm");
+      try {
+        const result = await api("/quotes/one-off", {
+          method: "POST",
+          body: JSON.stringify({
+            parking_id: form.elements.namedItem("parking_id").value,
+            hours: Number(form.elements.namedItem("hours").value),
+          }),
+        });
+        setFeedback("oneOffFeedback", `Cotação: receita R$ ${result.gross_revenue.toFixed(2)} • margem R$ ${result.gross_margin.toFixed(2)}`, "success");
+      } catch (error) {
+        setFeedback("oneOffFeedback", error.message, "error");
+      }
+    });
+
+    document.getElementById("quoteSubscriptionBtn").addEventListener("click", async () => {
+      const form = document.getElementById("subscriptionForm");
+      const subscription = state.subscriptions.find((item) => item.id === form.elements.namedItem("subscription_id").value);
+      if (!subscription) return;
+      try {
+        const result = await api("/quotes/subscription", {
+          method: "POST",
+          body: JSON.stringify({ plan_id: subscription.plan_id }),
+        });
+        setFeedback("subscriptionFeedback", `Valor do plano: R$ ${result.gross_revenue.toFixed(2)} • margem total R$ ${result.gross_margin.toFixed(2)}`, "success");
+      } catch (error) {
+        setFeedback("subscriptionFeedback", error.message, "error");
+      }
+    });
+
+    document.getElementById("oneOffForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      setSubmitting(form, true, "Salvando...");
+      try {
+        const payload = {
+          user_id: form.elements.namedItem("user_id").value,
+          vehicle_id: form.elements.namedItem("vehicle_id").value,
+          parking_id: form.elements.namedItem("parking_id").value,
+          start_at: toApiDateTime(form.elements.namedItem("start_at").value),
+          end_at: toApiDateTime(form.elements.namedItem("end_at").value),
+        };
+        const result = await api("/reservations/one-off", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        state.reservations.unshift(result.reservation);
+        state.inventory = result.inventory;
+        renderAll();
+        setFeedback("oneOffFeedback", `Reserva ${result.reservation.id} criada com sucesso.`, "success");
+        setFlash(`Reserva avulsa criada para ${findParking(result.reservation.parking_id)?.name || result.reservation.parking_id}.`);
+      } catch (error) {
+        setFeedback("oneOffFeedback", error.message, "error");
+        setFlash(error.message, "error");
+      } finally {
+        setSubmitting(form, false, "Salvando...");
+      }
+    });
+
+    document.getElementById("subscriptionForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      setSubmitting(form, true, "Consumindo...");
+      try {
+        const payload = {
+          subscription_id: form.elements.namedItem("subscription_id").value,
+          vehicle_id: form.elements.namedItem("vehicle_id").value,
+          parking_id: form.elements.namedItem("parking_id").value,
+          start_at: toApiDateTime(form.elements.namedItem("start_at").value),
+          end_at: toApiDateTime(form.elements.namedItem("end_at").value),
+        };
+        const result = await api("/reservations/subscription", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        state.inventory = result.inventory;
+        await loadAllWithRetry(2);
+        setFeedback("subscriptionFeedback", `Reserva ${result.reservation.id} criada e saldo atualizado para ${result.subscription.remaining_reservations}.`, "success");
+        setFlash(`Reserva por assinatura criada para ${findParking(result.reservation.parking_id)?.name || result.reservation.parking_id}.`);
+      } catch (error) {
+        setFeedback("subscriptionFeedback", error.message, "error");
+        setFlash(error.message, "error");
+      } finally {
+        setSubmitting(form, false, "Consumindo...");
+      }
+    });
+
+    saveBaseBtn.addEventListener("click", () => {
+      state.apiBase = apiBaseInput.value.trim().replace(/\/$/, "");
+      localStorage.setItem(storageKey, state.apiBase);
+      metricApiText.textContent = state.apiBase;
+      setFlash("Base da API salva.");
+    });
+
+    reloadBtn.addEventListener("click", async () => {
+      state.apiBase = apiBaseInput.value.trim().replace(/\/$/, "");
+      localStorage.setItem(storageKey, state.apiBase);
+      await loadAllWithRetry();
+    });
+
+    window.addEventListener("error", (event) => {
+      setFlash(`Erro na interface: ${event.message}`, "error");
+    });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => activateTab(button.dataset.tabTarget));
+    });
+
+    setDefaultTimes();
+    updateMetrics();
+    loadAllWithRetry();
+    setInterval(() => renderRealtimeBoard(), 60000);
+  </script>
+</body>
+</html>

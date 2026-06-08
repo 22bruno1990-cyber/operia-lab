@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zelador.ia - Operia Lab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <nav class="nav">
+        <strong>Zelador.ia</strong>
+        <div>
+          <a href="#demo">Demo</a>
+          <a href="#planos">Planos</a>
+          <a href="#operacao">Operação</a>
+          <a href="#relatorio">Relatório</a>
+        </div>
+      </nav>
+
+      <section class="app-tabs" aria-label="Módulos do Zelador.ia">
+        <button class="tab-button active" type="button" data-tab="prelaudo">Pré-laudo</button>
+        <button class="tab-button" type="button" data-tab="acompanhamento">Acompanhamento</button>
+      </section>
+
+      <section class="property-switcher">
+        <div>
+          <p class="eyebrow">Empreendimento ativo</p>
+          <strong id="activePropertyName">Edifício Matriz</strong>
+        </div>
+        <label class="field compact-field">
+          <span>Selecionar empreendimento</span>
+          <select id="propertySelect"></select>
+        </label>
+        <label class="field compact-field">
+          <span>Novo empreendimento</span>
+          <input id="newPropertyInput" type="text" placeholder="Ex: Torre Comercial Paulista">
+        </label>
+        <button class="secondary-button" id="addPropertyButton" type="button">Adicionar</button>
+      </section>
+
+      <div class="tab-page active" id="prelaudoPage">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Operia Lab apresenta</p>
+          <h1>Fotos entram. Pré-laudos saem prontos.</h1>
+          <p class="hero-text">Uma web demo para transformar problemas do andar em um resumo técnico com materiais, escopo, mão de obra média, pesquisa de preço e imagens para enviar ao fornecedor.</p>
+          <div class="brand-lockup">
+            <strong>Zelador.ia</strong>
+          <span>Tecnologia aplicada à manutenção predial</span>
+          </div>
+          <div class="hero-actions">
+            <a class="primary-link" href="#demo">Testar demo</a>
+            <button class="secondary-link hero-tab-link" id="heroTrackingButton" type="button">Ver acompanhamento</button>
+          </div>
+        </div>
+
+        <div class="hero-visual hero-photo-card" aria-label="Zelador usando o Zelador.ia em uma ocorrência predial">
+          <img src="assets/zelador-ia-hero.png" alt="Zelador fotografando um ponto de infiltração com celular em ambiente predial">
+          <div class="visual-overlay">
+            <div class="visual-header">
+              <span>Pré-laudo #024</span>
+              <strong>Alta</strong>
+            </div>
+            <div class="visual-line wide"></div>
+            <div class="visual-line"></div>
+            <div class="visual-metrics">
+              <span>R$ 300-1.200</span>
+              <span>24-48h</span>
+              <span>1-2 prof.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof-strip" id="operacao">
+        <div>
+          <strong>Diagnóstico técnico</strong>
+          <span>Problemas prováveis, risco e causa possível.</span>
+        </div>
+        <div>
+          <strong>Escopo e materiais</strong>
+          <span>Checklist do que pode entrar na obra.</span>
+        </div>
+        <div>
+          <strong>Orçamento consciente</strong>
+          <span>Referência média antes da proposta do prestador.</span>
+        </div>
+      </section>
+
+      <section class="pricing-section" id="planos">
+        <div class="pricing-copy">
+          <p class="eyebrow">Planos de lançamento</p>
+          <h2>Venda como ferramenta de gestão, não só como tecnologia.</h2>
+          <p>Zelador.ia organiza fotos, pré-laudos, custos de referência e acompanhamento de ordens por empreendimento. A mensalidade sugerida foi pensada para caber na rotina de um zelador, síndico operacional ou parceiro de manutenção.</p>
+          <div class="pricing-actions">
+            <a class="primary-link" href="#demo">Acessar demo</a>
+            <button class="secondary-link hero-tab-link" type="button" id="pricingTrackingButton">Ver acompanhamento</button>
+          </div>
+        </div>
+
+        <div class="pricing-cards">
+          <article class="price-card">
+            <span>Mensal</span>
+            <h3>R$ 197</h3>
+            <p>por mês</p>
+            <ul>
+              <li>Pré-laudos por fotos</li>
+              <li>Cadastro de empreendimentos</li>
+              <li>Histórico de ordens de serviço</li>
+              <li>PDF/resumo para fornecedor</li>
+            </ul>
+          </article>
+
+          <article class="price-card featured">
+            <span>Anual</span>
+            <h3>R$ 1.970</h3>
+            <p>por ano, equivalente a 10 mensalidades</p>
+            <ul>
+              <li>Dois meses de desconto</li>
+              <li>Melhor opção para condomínios e parceiros</li>
+              <li>Base para piloto com recorrência</li>
+              <li>Posicionamento Operia Lab</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="topbar" id="demo">
+        <div>
+          <p class="eyebrow">Demo interativa</p>
+          <h2>Monte um pré-laudo em segundos</h2>
+        </div>
+        <div class="status-pill" id="caseStatus">Novo chamado</div>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel intake-panel">
+          <div class="section-head">
+            <h2>Registro</h2>
+            <span>5 fotos</span>
+          </div>
+
+          <label class="field">
+            <span>Local</span>
+            <input id="locationInput" type="text" placeholder="Ex: Banheiro - 7o andar">
+          </label>
+
+          <div class="grid-two">
+            <label class="field">
+              <span>Categoria</span>
+              <select id="categoryInput">
+                <option value="auto">Detectar pela descrição</option>
+                <option value="hidraulica">Hidráulica</option>
+                <option value="eletrica">Elétrica</option>
+                <option value="civil">Civil</option>
+                <option value="climatizacao">Climatização</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="seguranca">Segurança</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Urgência percebida</span>
+              <select id="urgencyInput">
+                <option value="normal">Normal</option>
+                <option value="alta">Alta</option>
+                <option value="critica">Crítica</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>O que você percebeu?</span>
+            <textarea id="descriptionInput" rows="4" placeholder="Ex: mancha escura no teto, cheiro de umidade, gotejamento perto da luminária"></textarea>
+          </label>
+
+          <p class="scenario-label">Exemplos demo</p>
+          <div class="scenario-row">
+            <button class="scenario-button" type="button" data-scenario="umidade">Umidade</button>
+            <button class="scenario-button" type="button" data-scenario="eletrica">Elétrica</button>
+            <button class="scenario-button" type="button" data-scenario="ar">Ar-cond.</button>
+          </div>
+
+          <div class="photo-grid" id="photoGrid"></div>
+          <input id="photoInput" type="file" accept="image/*" multiple hidden>
+
+          <div class="actions">
+            <button class="icon-button" id="photoButton" type="button" title="Adicionar fotos">+</button>
+            <button class="primary-button" id="analyzeButton" type="button">Gerar pré-laudo</button>
+          </div>
+        </aside>
+
+        <section class="panel report-panel">
+          <div class="section-head">
+            <h2>Diagnóstico</h2>
+            <button class="ghost-button" id="resetButton" type="button">Limpar</button>
+          </div>
+
+          <div class="empty-staté" id="emptyStaté">
+            <strong>Aguardando evidências</strong>
+            <span>Preencha o local, descreva o sinal estranho e adicione até 5 fotos.</span>
+          </div>
+
+          <div class="report hidden" id="report">
+            <div class="risk-strip" id="riskStrip">
+              <div>
+                <span>Criticidade</span>
+                <strong id="severityText">Media</strong>
+              </div>
+              <div>
+                <span>Prazo sugerido</span>
+                <strong id="deadlineText">48h</strong>
+              </div>
+              <div>
+                <span>Custo base</span>
+                <strong id="costText">R$ 250 - R$ 700</strong>
+              </div>
+            </div>
+
+            <div class="source-banner demo-source" id="sourceBanner">
+              Origem: demo local
+            </div>
+
+            <div class="laudo-head">
+              <div>
+                <span>Relatório</span>
+                <strong id="reportIdText">ZIA-0000</strong>
+              </div>
+              <div>
+                <span>Local</span>
+                <strong id="reportLocationText">Local não informado</strong>
+              </div>
+              <div>
+                <span>Emissão</span>
+                <strong id="reportDateText">--/--/----</strong>
+              </div>
+            </div>
+
+            <div class="diagnosis-card">
+              <h3 id="problemTitle">Problema provável</h3>
+              <p id="technicalText"></p>
+            </div>
+
+            <div class="metrics">
+              <div>
+                <span>Profissional</span>
+                <strong id="proText"></strong>
+              </div>
+              <div>
+                <span>Equipe média</span>
+                <strong id="crewText"></strong>
+              </div>
+              <div>
+                <span>Execução</span>
+                <strong id="durationText"></strong>
+              </div>
+              <div>
+                <span>Status</span>
+                <strong id="statusText">Aberto</strong>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <h3>Ação recomendada</h3>
+              <ul id="actionsList"></ul>
+            </div>
+
+            <div class="section-block dual-section">
+              <div>
+                <h3>Materiais prováveis</h3>
+                <div class="tag-list" id="materialsList"></div>
+              </div>
+              <div>
+                <h3>Checklist de obra</h3>
+                <div class="scope-list" id="scopeList"></div>
+              </div>
+            </div>
+
+            <div class="section-block quote-panel">
+              <div>
+                <h3>Comparativo de orçamento</h3>
+                <p id="priceNote"></p>
+              </div>
+              <div class="quote-grid">
+                <label class="field compact-field">
+                  <span>Proposta do prestador</span>
+                  <input id="providerQuoteInput" type="number" min="0" placeholder="Ex: 650">
+                </label>
+                <label class="field compact-field">
+                  <span>Mão de obra informada</span>
+                  <input id="laborQuoteInput" type="number" min="0" placeholder="Ex: 350">
+                </label>
+                <label class="field compact-field">
+                  <span>Prestador/fornecedor</span>
+                  <input id="providerNameInput" type="text" placeholder="Ex: Manutenção Silva">
+                </label>
+                <label class="field compact-field">
+                  <span>Prazo proposto</span>
+                  <input id="providerDeadlineInput" type="text" placeholder="Ex: 2 dias úteis">
+                </label>
+              </div>
+              <div class="quote-result" id="quoteResult">Informe valores para comparar com a pesquisa média.</div>
+            </div>
+
+            <div class="section-block evidence-section">
+              <div>
+                <h3>Evidências anexadas</h3>
+                <p>Fotos usadas como base visual do pré-laudo e imagens pós-serviço quando existirem.</p>
+              </div>
+              <div class="evidence-grid" id="evidenceGrid"></div>
+            </div>
+
+            <div class="section-block report-preview">
+              <div>
+                <h3>Resumo para fornecedor</h3>
+                <p id="supplierSummary"></p>
+              </div>
+              <button class="secondary-button" id="copyReportButton" type="button">Copiar resumo</button>
+              <button class="secondary-button" id="saveOrderButton" type="button">Salvar OS</button>
+              <button class="primary-button print-button" id="printButton" type="button">Gerar PDF</button>
+            </div>
+
+            <div class="section-block">
+              <h3>Checklist de encerramento</h3>
+              <div class="checklist" id="checklist"></div>
+            </div>
+
+            <div class="resolution">
+              <div>
+                <h3>Validação pós-serviço</h3>
+                <p>Adicione fotos depois da execução para registrar se o problema foi sanado no prazo.</p>
+              </div>
+              <input id="afterInput" type="file" accept="image/*" multiple hidden>
+              <button class="secondary-button" id="afterButton" type="button">Fotos depois</button>
+              <button class="primary-button" id="closeButton" type="button">Avaliar encerramento</button>
+            </div>
+
+            <div class="after-grid" id="afterGrid"></div>
+            <div class="closure hidden" id="closureBox"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="report-showcase" id="relatorio">
+        <div>
+          <p class="eyebrow">Saída da demo</p>
+          <h2>Relatório para enviar ao fornecedor sem parecer leigo.</h2>
+        </div>
+        <div class="showcase-grid">
+          <div><strong>Problemas</strong><span>Lista técnica do que pode estar acontecendo.</span></div>
+          <div><strong>Materiais</strong><span>Itens prováveis para cotar antes da visita.</span></div>
+          <div><strong>Preço médio</strong><span>Pesquisa de referência para negociar melhor.</span></div>
+          <div><strong>Laudo simples</strong><span>Resumo com imagens para PDF ou WhatsApp.</span></div>
+        </div>
+      </section>
+
+      <section class="operator-section">
+        <div>
+          <p class="eyebrow">Para o zelador</p>
+          <h2>Menos achismo. Mais registro, clareza e acompanhamento.</h2>
+        </div>
+        <div class="operator-grid">
+          <div><strong>Antes da visita</strong><span>Você já tem fotos, suspeita técnica, materiais e perguntas certas.</span></div>
+          <div><strong>Durante a cotação</strong><span>Compara a proposta recebida com uma referência média de serviço.</span></div>
+          <div><strong>Depois do reparo</strong><span>Registra fotos finais e confere se o escopo foi realmente sanado.</span></div>
+        </div>
+      </section>
+
+      </div>
+
+      <section class="tab-page tracking-page" id="acompanhamentoPage">
+        <div class="tracking-header">
+        <div>
+          <p class="eyebrow">Ordens de serviço</p>
+          <h1>Acompanhamento completo</h1>
+            <p>Controle o caminho da OS desde o pré-laudo até a resolução, pendência ou exclusão no empreendimento selecionado.</p>
+        </div>
+          <div class="tracking-stats">
+            <div><span>Total</span><strong id="totalOrdersText">0</strong></div>
+            <div><span>Abertas</span><strong id="openOrdersText">0</strong></div>
+            <div><span>Pendentes</span><strong id="pendingOrdersText">0</strong></div>
+            <div><span>Resolvidas</span><strong id="resolvedOrdersText">0</strong></div>
+          </div>
+        </div>
+
+        <div class="tracking-toolbar">
+          <label class="field compact-field">
+            <span>Categoria</span>
+            <select id="historyCategoryFilter">
+              <option value="all">Todas</option>
+              <option value="hidraulica">Hidráulica</option>
+              <option value="eletrica">Elétrica</option>
+              <option value="civil">Civil</option>
+              <option value="climatizacao">Climatização</option>
+              <option value="limpeza">Limpeza</option>
+              <option value="seguranca">Segurança</option>
+            </select>
+          </label>
+          <label class="field compact-field">
+            <span>Status</span>
+            <select id="historyStatusFilter">
+              <option value="all">Todos</option>
+              <option value="aberta">Aberta</option>
+              <option value="em_execucao">Em execução</option>
+              <option value="pendente">Pendente</option>
+              <option value="resolvida">Resolvida</option>
+            </select>
+          </label>
+          <button class="secondary-button" id="showAllOrdersButton" type="button">Mostrar tudo</button>
+        </div>
+
+        <div class="history-empty" id="historyEmpty">
+          <strong>Nenhuma ordem salva ainda</strong>
+          <span>Gere um pré-laudo e clique em "Salvar OS" para acompanhar a execução.</span>
+        </div>
+
+        <div class="orders-list" id="ordersList"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

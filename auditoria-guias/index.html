@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transcrição de Guias | Anexos TISS</title>
+  <style>
+    :root {
+      --bg: #e7eef8;
+      --panel: #f7faff;
+      --ink: #16243a;
+      --muted: #5f6f88;
+      --line: #a8bbd4;
+      --brand: #1f5ea8;
+      --brand-dark: #07152d;
+      --critical: #0b2d56;
+      --ok: #1f5ea8;
+      --shadow: 0 18px 42px rgba(7, 21, 45, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+      color: #fff;
+      padding: 22px 28px;
+      border-bottom: 1px solid rgba(255,255,255,.16);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      color: #dce9ff;
+      font-size: 14px;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      min-height: calc(100vh - 92px);
+    }
+
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      font: inherit;
+    }
+
+    .guide-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #f8fbfc;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      display: grid;
+      gap: 4px;
+    }
+
+    button:hover,
+    button.active {
+      border-color: var(--brand);
+      background: #eaf3ff;
+    }
+
+    button strong {
+      font-size: 14px;
+    }
+
+    button span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .critical {
+      color: #dce9ff;
+      background: var(--critical);
+    }
+
+    .ok {
+      color: var(--ok);
+      background: #d8e8ff;
+    }
+
+    .viewer {
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+    }
+
+    .summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .summary h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .summary p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(86px, 1fr));
+      gap: 8px;
+      min-width: 460px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #eaf3ff;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 18px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 720px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fbfc;
+      box-shadow: var(--shadow);
+    }
+
+    a {
+      color: var(--brand);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    @media (max-width: 1000px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        min-width: 0;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Transcrição de Guias</h1>
+    <p>Acervo sintético no padrão aproximado de Guia TISS para demonstrar divergência entre sessões declaradas no Salesforce e sessões preenchidas/assinadas no anexo.</p>
+  </header>
+
+  <main>
+    <aside>
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Buscar protocolo, prestador ou terapia">
+      </div>
+      <div id="guideList" class="guide-list"></div>
+    </aside>
+
+    <section class="viewer">
+      <div class="summary">
+        <div>
+          <h2 id="title"></h2>
+          <p id="subtitle"></p>
+          <p><a id="openPdf" href="#" target="_blank" rel="noreferrer">Abrir PDF em nova aba</a></p>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Declarado</span><strong id="declared"></strong></div>
+          <div class="metric"><span>Na guia</span><strong id="found"></strong></div>
+          <div class="metric"><span>Assinado</span><strong id="signed"></strong></div>
+          <div class="metric"><span>Diferença</span><strong id="diff"></strong></div>
+        </div>
+      </div>
+      <iframe id="pdfFrame" title="Visualizador do PDF"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const guides = [
+      { p: "P-3001", prestador: "Clinica Horizonte", paciente: "Paciente 001", terapia: "Psicoterapia", declarado: 20, guia: 4, assinado: 4, pdf: "pdfs_tiss/P-3001_guia_tiss_anonimizada.pdf" },
+      { p: "P-3002", prestador: "Centro Voz Clara", paciente: "Paciente 002", terapia: "Fonoterapia", declarado: 16, guia: 8, assinado: 8, pdf: "pdfs_tiss/P-3002_guia_tiss_anonimizada.pdf" },
+      { p: "P-3003", prestador: "Nucleo Integrar", paciente: "Paciente 003", terapia: "Terapia Ocupacional", declarado: 12, guia: 12, assinado: 9, pdf: "pdfs_tiss/P-3003_guia_tiss_anonimizada.pdf" },
+      { p: "P-3004", prestador: "Espaco Cuidar", paciente: "Paciente 004", terapia: "Psicoterapia", declarado: 10, guia: 6, assinado: 6, pdf: "pdfs_tiss/P-3004_guia_tiss_anonimizada.pdf" },
+      { p: "P-3005", prestador: "Fono Vida", paciente: "Paciente 005", terapia: "Fonoterapia", declarado: 14, guia: 10, assinado: 7, pdf: "pdfs_tiss/P-3005_guia_tiss_anonimizada.pdf" },
+      { p: "P-3006", prestador: "Clinica Movimento", paciente: "Paciente 006", terapia: "Terapia Ocupacional", declarado: 18, guia: 5, assinado: 5, pdf: "pdfs_tiss/P-3006_guia_tiss_anonimizada.pdf" },
+      { p: "P-3007", prestador: "Instituto Equilibrio", paciente: "Paciente 007", terapia: "Psicoterapia", declarado: 8, guia: 8, assinado: 8, pdf: "pdfs_tiss/P-3007_guia_tiss_anonimizada.pdf" },
+      { p: "P-3008", prestador: "Centro Voz Clara", paciente: "Paciente 008", terapia: "Fonoterapia", declarado: 20, guia: 11, assinado: 11, pdf: "pdfs_tiss/P-3008_guia_tiss_anonimizada.pdf" },
+      { p: "P-3009", prestador: "Nucleo Integrar", paciente: "Paciente 009", terapia: "Terapia Ocupacional", declarado: 15, guia: 13, assinado: 10, pdf: "pdfs_tiss/P-3009_guia_tiss_anonimizada.pdf" },
+      { p: "P-3010", prestador: "Clinica Horizonte", paciente: "Paciente 010", terapia: "Psicoterapia", declarado: 6, guia: 3, assinado: 3, pdf: "pdfs_tiss/P-3010_guia_tiss_anonimizada.pdf" },
+      { p: "P-3011", prestador: "Espaco Cuidar", paciente: "Paciente 011", terapia: "Psicoterapia", declarado: 12, guia: 4, assinado: 4, pdf: "pdfs_tiss/P-3011_guia_tiss_anonimizada.pdf" },
+      { p: "P-3012", prestador: "Fono Vida", paciente: "Paciente 012", terapia: "Fonoterapia", declarado: 10, guia: 10, assinado: 5, pdf: "pdfs_tiss/P-3012_guia_tiss_anonimizada.pdf" },
+      { p: "P-3013", prestador: "Clinica Movimento", paciente: "Paciente 013", terapia: "Terapia Ocupacional", declarado: 16, guia: 6, assinado: 6, pdf: "pdfs_tiss/P-3013_guia_tiss_anonimizada.pdf" },
+      { p: "P-3014", prestador: "Instituto Equilibrio", paciente: "Paciente 014", terapia: "Psicoterapia", declarado: 18, guia: 12, assinado: 12, pdf: "pdfs_tiss/P-3014_guia_tiss_anonimizada.pdf" },
+      { p: "P-3015", prestador: "Centro Voz Clara", paciente: "Paciente 015", terapia: "Fonoterapia", declarado: 9, guia: 7, assinado: 7, pdf: "pdfs_tiss/P-3015_guia_tiss_anonimizada.pdf" },
+      { p: "P-3016", prestador: "Nucleo Integrar", paciente: "Paciente 016", terapia: "Terapia Ocupacional", declarado: 20, guia: 15, assinado: 12, pdf: "pdfs_tiss/P-3016_guia_tiss_anonimizada.pdf" },
+      { p: "P-3017", prestador: "Clinica Horizonte", paciente: "Paciente 017", terapia: "Psicoterapia", declarado: 11, guia: 2, assinado: 2, pdf: "pdfs_tiss/P-3017_guia_tiss_anonimizada.pdf" },
+      { p: "P-3018", prestador: "Fono Vida", paciente: "Paciente 018", terapia: "Fonoterapia", declarado: 13, guia: 9, assinado: 8, pdf: "pdfs_tiss/P-3018_guia_tiss_anonimizada.pdf" },
+      { p: "P-3019", prestador: "Clinica Movimento", paciente: "Paciente 019", terapia: "Terapia Ocupacional", declarado: 7, guia: 7, assinado: 7, pdf: "pdfs_tiss/P-3019_guia_tiss_anonimizada.pdf" },
+      { p: "P-3020", prestador: "Espaco Cuidar", paciente: "Paciente 020", terapia: "Psicoterapia", declarado: 20, guia: 1, assinado: 1, pdf: "pdfs_tiss/P-3020_guia_tiss_anonimizada.pdf" }
+    ];
+
+    let selected = guides[0];
+
+    function status(item) {
+      return item.declarado > item.assinado ? "Divergente" : "OK";
+    }
+
+    function renderList() {
+      const query = document.querySelector("#search").value.toLowerCase();
+      const filtered = guides.filter(item => `${item.p} ${item.prestador} ${item.terapia}`.toLowerCase().includes(query));
+      document.querySelector("#guideList").innerHTML = filtered.map(item => `
+        <button class="${item.p === selected.p ? "active" : ""}" data-protocol="${item.p}">
+          <strong>${item.p} · ${item.terapia}</strong>
+          <span>${item.prestador} · Declarado ${item.declarado} / Assinado ${item.assinado}</span>
+          <span class="badge ${status(item) === "OK" ? "ok" : "critical"}">${status(item)}</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll("button[data-protocol]").forEach(button => {
+        button.addEventListener("click", () => {
+          selected = guides.find(item => item.p === button.dataset.protocol);
+          render();
+        });
+      });
+    }
+
+    function renderDetail() {
+      document.querySelector("#title").textContent = `${selected.p} · ${selected.terapia}`;
+      document.querySelector("#subtitle").textContent = `${selected.prestador} · ${selected.paciente}`;
+      document.querySelector("#declared").textContent = selected.declarado;
+      document.querySelector("#found").textContent = selected.guia;
+      document.querySelector("#signed").textContent = selected.assinado;
+      document.querySelector("#diff").textContent = Math.max(0, selected.declarado - selected.assinado);
+      document.querySelector("#pdfFrame").src = selected.pdf;
+      document.querySelector("#openPdf").href = selected.pdf;
+    }
+
+    function render() {
+      renderList();
+      renderDetail();
+    }
+
+    document.querySelector("#search").addEventListener("input", renderList);
+    render();
+  </script>
+</body>
+</html>

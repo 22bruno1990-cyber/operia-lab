@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>ParkFlow</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f8fc;
+      --line: rgba(24, 56, 92, 0.11);
+      --text: #17324f;
+      --muted: #6f87a2;
+      --brand: #2eb8ff;
+      --brand-2: #7fe6c4;
+      --shadow: 0 24px 68px rgba(34, 65, 102, 0.14);
+      --radius: 30px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: light; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Avenir Next", "Montserrat", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(46, 184, 255, 0.18), transparent 26%),
+        radial-gradient(circle at 90% 12%, rgba(127, 230, 196, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8fcff 0%, #edf6fb 52%, #f7fafc 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(23, 50, 79, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 50, 79, 0.035) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04));
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 26px 0 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar,
+    .hero,
+    .access-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: #0d2942;
+      font-weight: 900;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .brand h1 {
+      font-size: 19px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .muted,
+    .brand p,
+    .hero p,
+    .access-card p {
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #1f7d59;
+      background: rgba(65, 200, 141, 0.1);
+      border: 1px solid rgba(65, 200, 141, 0.18);
+    }
+
+    .hero {
+      padding: 34px;
+      margin-bottom: 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero h2 {
+      max-width: 860px;
+      font-size: clamp(38px, 5.4vw, 72px);
+      line-height: 0.96;
+      letter-spacing: -0.055em;
+    }
+
+    .hero .accent {
+      background: linear-gradient(135deg, #1589c8, #2fba7e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 760px;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .access-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .access-card {
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+      min-height: 300px;
+      text-decoration: none;
+      color: inherit;
+      transition: 180ms ease;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .access-card::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      border-radius: 999px;
+      right: -58px;
+      bottom: -70px;
+      background: linear-gradient(135deg, rgba(46, 184, 255, 0.16), rgba(127, 230, 196, 0.18));
+    }
+
+    .access-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(46, 184, 255, 0.34);
+      box-shadow: 0 30px 80px rgba(46, 184, 255, 0.16);
+    }
+
+    .access-card h3 {
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1;
+      letter-spacing: -0.045em;
+      max-width: 520px;
+    }
+
+    .access-card p {
+      font-size: 17px;
+      line-height: 1.58;
+      max-width: 520px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(246, 250, 254, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .step strong {
+      display: block;
+      color: var(--text);
+      font-size: 17px;
+      margin-bottom: 5px;
+    }
+
+    .cta {
+      width: fit-content;
+      position: relative;
+      z-index: 1;
+      border-radius: 16px;
+      padding: 13px 16px;
+      color: #0d2942;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .footer-links a {
+      color: #23496e;
+      text-decoration: none;
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      border-radius: 999px;
+      padding: 10px 13px;
+      background: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 860px) {
+      .access-grid,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">P</div>
+        <div>
+          <h1>ParkFlow</h1>
+          <p>Um acesso para vender e operar reserva inteligente de estacionamento</p>
+        </div>
+      </div>
+      <span class="pill">Driver + Parking</span>
+    </header>
+
+    <section class="hero">
+      <span class="pill">Escolha a visão</span>
+      <h2>Do celular do motorista ao painel do pátio, <span class="accent">tudo no mesmo produto.</span></h2>
+      <p>Use essa entrada única para apresentar o ParkFlow pelos dois lados: quem reserva a vaga no app e quem administra a operação do estacionamento.</p>
+    </section>
+
+    <section class="access-grid" aria-label="Acessos principais do ParkFlow">
+      <a class="access-card" href="parkflow_driver.html">
+        <span class="pill">Visão Driver</span>
+        <h3>Motorista reservando pelo celular</h3>
+        <p>Cadastro do carro, placa, busca por estacionamento, duração da vaga, pagamento e comprovante para chegada.</p>
+        <div class="steps">
+          <div class="step"><strong>1</strong>Salvar carro e placa</div>
+          <div class="step"><strong>2</strong>Escolher vaga e duração</div>
+          <div class="step"><strong>3</strong>Receber comprovante</div>
+        </div>
+        <span class="cta">Entrar como Driver</span>
+      </a>
+
+      <a class="access-card" href="parkflow_ops.html">
+        <span class="pill">Visão Parking</span>
+        <h3>Estacionamento operando o pátio</h3>
+        <p>Agenda ao vivo, entradas, saídas, atrasos, hora extra, consulta de vagas e tratativas do operador.</p>
+        <div class="steps">
+          <div class="step"><strong>1</strong>Acompanhar chegadas</div>
+          <div class="step"><strong>2</strong>Gerir saídas e atrasos</div>
+          <div class="step"><strong>3</strong>Controlar vagas</div>
+        </div>
+        <span class="cta">Entrar como Parking</span>
+      </a>
+
+      <a class="access-card" href="parkflow_partner.html">
+        <span class="pill">Janela Comercial</span>
+        <h3>Convencer o estacionamento parceiro</h3>
+        <p>Oferta de piloto, conta de receita incremental, operação simples e argumentos para vender a primeira implantação.</p>
+        <div class="steps">
+          <div class="step"><strong>1</strong>Mostrar ganho real</div>
+          <div class="step"><strong>2</strong>Explicar operação</div>
+          <div class="step"><strong>3</strong>Fechar piloto</div>
+        </div>
+        <span class="cta">Abrir Comercial</span>
+      </a>
+    </section>
+
+    <nav class="footer-links" aria-label="Acessos auxiliares">
+      <a href="parkflow_admin.html">Admin de cadastros</a>
+      <a href="#">Status da API</a>
+    </nav>
+  </div>
+</body>
+</html>

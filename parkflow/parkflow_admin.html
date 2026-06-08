@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>ParkFlow Admin v2</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef4f8;
+      --bg-soft: #dce9f2;
+      --panel: rgba(255, 255, 255, 0.92);
+      --panel-soft: rgba(247, 251, 254, 0.92);
+      --line: rgba(25, 73, 114, 0.12);
+      --line-strong: rgba(25, 73, 114, 0.22);
+      --text: #16324a;
+      --muted: #627d93;
+      --brand: #19a7d8;
+      --brand-2: #63d7b2;
+      --brand-3: #f4c96a;
+      --danger: #db7b7b;
+      --ok: #1c9d72;
+      --shadow: 0 18px 44px rgba(40, 76, 108, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Avenir Next", "Montserrat", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(25, 167, 216, 0.14), transparent 24%),
+        radial-gradient(circle at top right, rgba(99, 215, 178, 0.12), transparent 22%),
+        linear-gradient(180deg, #f4f8fb 0%, #edf3f7 52%, #e6eef4 100%);
+      min-height: 100vh;
+    }
+
+    html {
+      color-scheme: light;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(19, 64, 100, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(19, 64, 100, 0.03) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04));
+    }
+
+    .app {
+      width: min(1440px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 54px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar,
+    .hero,
+    .workspace,
+    .statusbar {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 254, 0.96));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #04111f;
+      font-weight: 900;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 10px 26px rgba(25, 167, 216, 0.18);
+    }
+
+    .brand h1,
+    .hero h2,
+    .section-header h3,
+    .panel h3,
+    .card h4 {
+      margin: 0;
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .brand p,
+    .topbar small,
+    .hero p,
+    .section-header p,
+    .panel p,
+    .card p,
+    label,
+    .muted {
+      color: var(--muted);
+    }
+
+    .hero {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #caf2ff;
+      color: #0d5875;
+      background: rgba(25, 167, 216, 0.1);
+      border: 1px solid rgba(25, 167, 216, 0.16);
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      font-size: clamp(34px, 4.5vw, 64px);
+      line-height: 0.94;
+      letter-spacing: -0.05em;
+      margin-bottom: 14px;
+      max-width: 740px;
+    }
+
+    .hero .accent {
+      background: linear-gradient(135deg, #c9f1ff, #91ffd8);
+      background: linear-gradient(135deg, #1384b4, #1fa67f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      margin: 0;
+      line-height: 1.6;
+      font-size: 18px;
+      max-width: 740px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+
+    .metric {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.035);
+      background: rgba(244, 248, 251, 0.92);
+      border: 1px solid rgba(25, 73, 114, 0.08);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 6px;
+      letter-spacing: -0.04em;
+    }
+
+    .statusbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(99, 215, 178, 0.12);
+      color: #196b56;
+      border: 1px solid rgba(99, 215, 178, 0.16);
+    }
+
+    .chip.warn {
+      background: rgba(244, 201, 106, 0.16);
+      color: #8d6a11;
+      border-color: rgba(244, 201, 106, 0.2);
+    }
+
+    .chip.error {
+      background: rgba(219, 123, 123, 0.12);
+      color: #9b4141;
+      border-color: rgba(219, 123, 123, 0.18);
+    }
+
+    .workspace {
+      padding: 24px;
+    }
+
+    .api-config {
+      display: grid;
+      grid-template-columns: 1.2fr auto auto;
+      gap: 12px;
+      margin-bottom: 18px;
+      align-items: end;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(19, 64, 100, 0.1);
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--muted);
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      color: #0d2740;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .tab-panel {
+      display: none;
+      animation: rise 220ms ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      border-radius: 22px;
+      border: 1px solid rgba(19, 64, 100, 0.08);
+      background: linear-gradient(180deg, rgba(246, 250, 253, 0.98), rgba(238, 245, 250, 0.98));
+    }
+
+    .section-header h3 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      letter-spacing: -0.03em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+
+    .panel,
+    .card,
+    .empty {
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .panel {
+      padding: 22px;
+      position: static;
+      align-self: start;
+    }
+
+    .list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .card-header,
+    .inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 14px;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(19, 64, 100, 0.08);
+      background: rgba(240, 246, 250, 0.96);
+      color: #33516b;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .mini {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(243, 248, 252, 0.98);
+      border: 1px solid rgba(19, 64, 100, 0.06);
+    }
+
+    .mini strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field-grid.single {
+      grid-template-columns: 1fr;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      color-scheme: light;
+      width: 100%;
+      border: 1px solid rgba(19, 64, 100, 0.1);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--text);
+      padding: 14px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 108px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .form-feedback {
+      min-height: 22px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 2px;
+      color: var(--muted);
+    }
+
+    .form-feedback.success {
+      color: var(--ok);
+    }
+
+    .form-feedback.error {
+      color: #ffd0d0;
+    }
+
+    .is-loading {
+      opacity: 0.72;
+      pointer-events: none;
+    }
+
+    button {
+      color-scheme: light;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .primary {
+      color: #082033;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 12px 24px rgba(25, 167, 216, 0.16);
+    }
+
+    .secondary {
+      color: #21415b;
+      background: rgba(244, 248, 252, 0.98);
+      border: 1px solid rgba(19, 64, 100, 0.12);
+    }
+
+    .danger {
+      color: #8f3b3b;
+      background: rgba(255, 240, 240, 0.96);
+      border: 1px solid rgba(219, 123, 123, 0.2);
+    }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .flash {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .version-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #06111f;
+      background: linear-gradient(135deg, var(--brand-3), #fff0c2);
+      border: 1px solid rgba(255, 211, 110, 0.26);
+    }
+
+    .future-note {
+      margin-bottom: 22px;
+      padding: 16px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(25, 167, 216, 0.12);
+      background: linear-gradient(135deg, rgba(25, 167, 216, 0.06), rgba(99, 215, 178, 0.08));
+      color: #24506f;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1140px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        width: min(100%, calc(100% - 18px));
+      }
+
+      .topbar,
+      .statusbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .api-config,
+      .field-grid,
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">P</div>
+        <div>
+          <h1>ParkFlow Admin</h1>
+          <p>Painel administrativo para operar estacionamentos, estabelecimentos e planos</p>
+        </div>
+      </div>
+      <div class="version-note">Versão visível v2 • 16/04 • feedback de salvamento</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Catálogo Operacional</span>
+        <h2>Edite o núcleo do produto <span class="accent">sem tocar no código</span>.</h2>
+        <p>Essa tela foi feita para você operar o catálogo do ParkFlow de forma prática: cadastrar estacionamentos, montar a rede parceira, ajustar planos e manter a base pronta para o app e para o painel do pátio.</p>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <strong id="metric-parkings">--</strong>
+          <span>Estacionamentos na base</span>
+        </div>
+        <div class="metric">
+          <strong id="metric-partners">--</strong>
+          <span>Estabelecimentos credenciados</span>
+        </div>
+        <div class="metric">
+          <strong id="metric-plans">--</strong>
+          <span>Planos ativos</span>
+        </div>
+        <div class="metric">
+          <strong id="metric-base">API</strong>
+          <span id="metric-base-text">Aguardando conexão</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="statusbar">
+      <span class="chip" id="api-status">Backend não verificado</span>
+      <span class="chip warn">SQLite local ou Postgres via DATABASE_URL</span>
+      <span class="chip">Admin visual</span>
+      <span class="chip">Wallet pré-paga</span>
+      <span class="flash" id="flash">Pronto para carregar dados.</span>
+    </section>
+
+    <section class="workspace">
+      <div class="api-config">
+        <label>
+          Base da API
+          <input id="apiBase" type="text" value="http://127.0.0.1:8010" placeholder="http://127.0.0.1:8010">
+        </label>
+        <button class="secondary" id="saveBaseBtn" type="button">Salvar Base</button>
+        <button class="primary" id="reloadBtn" type="button">Recarregar Dados</button>
+      </div>
+
+      <div class="future-note">
+        Esse admin foi reorganizado para ficar em módulos mais claros. Próxima etapa recomendada:
+        painel dinâmico em tempo real com farol de chegada, proximidade do horário agendado, visão por estacionamento e camada de wallet pré-paga para retenção.
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="parkings">Cadastro de Estacionamento</button>
+        <button class="tab-btn" data-tab="partners">Cadastro de Estabelecimento</button>
+        <button class="tab-btn" data-tab="plans">Cadastro de Planos</button>
+      </div>
+
+      <section class="tab-panel active" id="tab-parkings">
+        <div class="section-header">
+          <h3>Ambiente de Estacionamentos</h3>
+          <p>Cadastre e atualize o inventário estrutural de cada pátio com mais respiro visual, separando operação física, capacidade digital, custo e mensalidade SaaS.</p>
+        </div>
+        <div class="grid">
+          <aside class="panel">
+            <h3 id="parking-form-title">Novo estacionamento</h3>
+            <p>Use este ambiente para criar ou editar um estacionamento no catálogo.</p>
+            <form id="parkingForm">
+              <label>
+                ID
+                <input name="id" required placeholder="park-executivo-center">
+              </label>
+              <div class="field-grid">
+                <label>
+                  Nome
+                  <input name="name" required placeholder="Executivo Center Parking">
+                </label>
+                <label>
+                  Região
+                  <input name="region" required placeholder="boa-viagem">
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Modo
+                  <select name="mode" required>
+                    <option value="numbered">numbered</option>
+                    <option value="sector">sector</option>
+                    <option value="valet">valet</option>
+                  </select>
+                </label>
+                <label>
+                  Capacidade digital
+                  <input name="capacity_digital" type="number" min="1" required value="10">
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Preço base/hora
+                  <input name="base_hour_price" type="number" step="0.01" required value="18">
+                </label>
+                <label>
+                  Custo parceiro/uso
+                  <input name="partner_cost_per_use" type="number" step="0.01" required value="12">
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Fee premium
+                  <input name="premium_fee" type="number" step="0.01" required value="6">
+                </label>
+                <label>
+                  SaaS mensal
+                  <input name="monthly_saas_price" type="number" step="0.01" required value="700">
+                </label>
+              </div>
+              <label>
+                Tags
+                <input name="tags" placeholder="mall,lpr,numbered">
+              </label>
+              <div class="actions">
+                <button class="primary" type="submit">Salvar</button>
+                <button class="secondary" type="button" data-reset="parking">Limpar</button>
+              </div>
+              <div class="form-feedback" id="parkingFeedback"></div>
+            </form>
+          </aside>
+          <div class="list" id="parkingList"></div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-partners">
+        <div class="section-header">
+          <h3>Ambiente de Estabelecimentos</h3>
+          <p>Monte a rede credenciada ligando clínicas, academias, empresas, shoppings e outros estabelecimentos aos estacionamentos corretos.</p>
+        </div>
+        <div class="grid">
+          <aside class="panel">
+            <h3 id="partner-form-title">Novo estabelecimento</h3>
+            <p>Cadastre o estabelecimento e os estacionamentos que fazem parte da rede dele.</p>
+            <form id="partnerForm">
+              <label>
+                ID
+                <input name="id" required placeholder="partner-torre-alpha">
+              </label>
+              <div class="field-grid">
+                <label>
+                  Nome
+                  <input name="name" required placeholder="Torre Alpha">
+                </label>
+                <label>
+                  Região
+                  <input name="region" required placeholder="boa-viagem">
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Tipo
+                  <select name="partner_type" required>
+                    <option value="parking">parking</option>
+                    <option value="clinic">clinic</option>
+                    <option value="gym">gym</option>
+                    <option value="mall">mall</option>
+                    <option value="office">office</option>
+                    <option value="corporate">corporate</option>
+                  </select>
+                </label>
+                <label>
+                  Parking IDs
+                  <input name="linked_parking_ids" placeholder="park-beira-mar,park-prime-office">
+                </label>
+              </div>
+              <div class="actions">
+                <button class="primary" type="submit">Salvar</button>
+                <button class="secondary" type="button" data-reset="partner">Limpar</button>
+              </div>
+              <div class="form-feedback" id="partnerFeedback"></div>
+            </form>
+          </aside>
+          <div class="list" id="partnerList"></div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-plans">
+        <div class="section-header">
+          <h3>Ambiente de Planos</h3>
+          <p>Gerencie assinatura pessoal, pacote corporativo e oferta SaaS de operação em um espaço próprio, sem misturar com os demais cadastros.</p>
+        </div>
+        <div class="grid">
+          <aside class="panel">
+            <h3 id="plan-form-title">Novo plano</h3>
+            <p>Defina preço, público e estrutura de monetização sem precisar alterar o backend.</p>
+            <form id="planForm">
+              <label>
+                ID
+                <input name="id" required placeholder="smart-rotina-20">
+              </label>
+              <div class="field-grid">
+                <label>
+                  Nome
+                  <input name="name" required placeholder="Smart Rotina 20">
+                </label>
+                <label>
+                  Público
+                  <select name="audience" required>
+                    <option value="personal">personal</option>
+                    <option value="corporate">corporate</option>
+                    <option value="operator">operator</option>
+                  </select>
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Revenue type
+                  <select name="revenue_type" required>
+                    <option value="subscription">subscription</option>
+                    <option value="corporate">corporate</option>
+                    <option value="saas">saas</option>
+                    <option value="one_off">one_off</option>
+                  </select>
+                </label>
+                <label>
+                  Preço mensal
+                  <input name="monthly_price" type="number" step="0.01" required value="189">
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Reservas incluídas
+                  <input name="included_reservations" type="number" min="0" required value="12">
+                </label>
+                <label>
+                  Veículos permitidos
+                  <input name="allowed_vehicle_count" type="number" min="0" required value="2">
+                </label>
+              </div>
+              <div class="field-grid single">
+                <label>
+                  Custo estimado por uso
+                  <input name="estimated_partner_cost_per_use" type="number" step="0.01" required value="12">
+                </label>
+              </div>
+              <label>
+                Descrição
+                <textarea name="description" required placeholder="Plano pessoal com flexibilidade e prioridade em horários selecionados."></textarea>
+              </label>
+              <div class="actions">
+                <button class="primary" type="submit">Salvar</button>
+                <button class="secondary" type="button" data-reset="plan">Limpar</button>
+              </div>
+              <div class="form-feedback" id="planFeedback"></div>
+            </form>
+          </aside>
+          <div class="list" id="planList"></div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script>
+    const storageKey = "parkflow-admin-api-base";
+    const state = {
+      apiBase: localStorage.getItem(storageKey) || "http://127.0.0.1:8010",
+      parkings: [],
+      partners: [],
+      plans: [],
+      editing: {
+        parking: null,
+        partner: null,
+        plan: null,
+      },
+    };
+
+    const apiBaseInput = document.getElementById("apiBase");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const saveBaseBtn = document.getElementById("saveBaseBtn");
+    const apiStatus = document.getElementById("api-status");
+    const flash = document.getElementById("flash");
+    const metricParkings = document.getElementById("metric-parkings");
+    const metricPartners = document.getElementById("metric-partners");
+    const metricPlans = document.getElementById("metric-plans");
+    const metricBaseText = document.getElementById("metric-base-text");
+
+    apiBaseInput.value = state.apiBase;
+
+    function setFlash(message, tone = "default") {
+      flash.textContent = message;
+      apiStatus.className = "chip";
+      if (tone === "error") {
+        apiStatus.classList.add("error");
+      } else if (tone === "warn") {
+        apiStatus.classList.add("warn");
+      }
+    }
+
+    function updateMetrics() {
+      metricParkings.textContent = state.parkings.length;
+      metricPartners.textContent = state.partners.length;
+      metricPlans.textContent = state.plans.length;
+      metricBaseText.textContent = state.apiBase;
+    }
+
+    function parseCsv(value) {
+      return value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function slugify(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .replace(/-{2,}/g, "-");
+    }
+
+    function getField(form, name) {
+      return form.elements.namedItem(name);
+    }
+
+    function setFormFeedback(targetId, message = "", tone = "default") {
+      const element = document.getElementById(targetId);
+      if (!element) return;
+      element.textContent = message;
+      element.className = "form-feedback";
+      if (tone === "success") element.classList.add("success");
+      if (tone === "error") element.classList.add("error");
+    }
+
+    function setSubmitting(form, isSubmitting) {
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (!submitButton) return;
+      submitButton.disabled = isSubmitting;
+      submitButton.textContent = isSubmitting ? "Salvando..." : "Salvar";
+      form.classList.toggle("is-loading", isSubmitting);
+    }
+
+    function upsertById(collection, item) {
+      const index = collection.findIndex((entry) => entry.id === item.id);
+      if (index >= 0) {
+        collection[index] = item;
+        return;
+      }
+      collection.unshift(item);
+    }
+
+    function sortByName(collection) {
+      collection.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "pt-BR"));
+    }
+
+    async function refreshAfterMutation(successMessage, feedbackId) {
+      try {
+        await loadAll();
+        setFlash(successMessage);
+        setFormFeedback(feedbackId, `${successMessage} Lista recarregada com sucesso.`, "success");
+      } catch (error) {
+        setFlash(`${successMessage} Mas a lista não recarregou automaticamente.`, "warn");
+        setFormFeedback(
+          feedbackId,
+          `${successMessage} O cadastro foi salvo, mas a tela precisa de "Recarregar Dados".`,
+          "success"
+        );
+      }
+    }
+
+    function applyParkingMutation(item) {
+      upsertById(state.parkings, item);
+      sortByName(state.parkings);
+      renderAll();
+    }
+
+    function applyPartnerMutation(item) {
+      upsertById(state.partners, item);
+      sortByName(state.partners);
+      renderAll();
+    }
+
+    function applyPlanMutation(item) {
+      upsertById(state.plans, item);
+      sortByName(state.plans);
+      renderAll();
+    }
+
+    function removeById(collection, id) {
+      const index = collection.findIndex((entry) => entry.id === id);
+      if (index >= 0) {
+        collection.splice(index, 1);
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function loadAllWithRetry(attempts = 3) {
+      let lastError = null;
+      for (let attempt = 1; attempt <= attempts; attempt += 1) {
+        try {
+          if (attempt > 1) {
+            setFlash(`Tentando conectar novamente... ${attempt}/${attempts}`, "warn");
+            await sleep(450);
+          }
+          await loadAll();
+          return true;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      if (lastError) {
+        setFlash(`${lastError.message}. Você pode tentar "Recarregar Dados".`, "error");
+      }
+      return false;
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${state.apiBase}${path}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...options,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || `Erro HTTP ${response.status}`);
+      }
+      return data;
+    }
+
+    async function loadAll() {
+      try {
+        const [health, parkingsRes, partnersRes, plansRes] = await Promise.all([
+          api("/health"),
+          api("/admin/parkings"),
+          api("/admin/partners"),
+          api("/admin/plans"),
+        ]);
+
+        state.parkings = parkingsRes.parkings || [];
+        state.partners = partnersRes.partners || [];
+        state.plans = [
+          ...(plansRes.personal || []),
+          ...(plansRes.corporate || []),
+          ...(plansRes.operator || []),
+        ];
+
+        apiStatus.textContent = `API online • ${health.project}`;
+        setFlash("Dados carregados com sucesso.");
+        renderAll();
+      } catch (error) {
+        apiStatus.textContent = "Falha ao conectar API";
+        setFlash(error.message, "error");
+        throw error;
+      }
+    }
+
+    function renderAll() {
+      updateMetrics();
+      renderParkings();
+      renderPartners();
+      renderPlans();
+    }
+
+    function renderParkings() {
+      const root = document.getElementById("parkingList");
+      if (!state.parkings.length) {
+        root.innerHTML = `<div class="empty">Nenhum estacionamento cadastrado ainda.</div>`;
+        return;
+      }
+      root.innerHTML = state.parkings
+        .map((parking) => `
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <h4>${parking.name}</h4>
+                <p class="muted">${parking.id} • ${parking.region}</p>
+              </div>
+              <span class="tag">${parking.mode}</span>
+            </div>
+            <div class="meta">
+              ${(parking.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("")}
+            </div>
+            <div class="card-grid">
+              <div class="mini"><strong>R$ ${Number(parking.base_hour_price).toFixed(2)}</strong><span class="muted">Base/hora</span></div>
+              <div class="mini"><strong>${parking.capacity_digital}</strong><span class="muted">Capacidade digital</span></div>
+              <div class="mini"><strong>R$ ${Number(parking.monthly_saas_price).toFixed(2)}</strong><span class="muted">SaaS mensal</span></div>
+            </div>
+            <div class="actions">
+              <button class="secondary" type="button" onclick="editParking('${parking.id}')">Editar</button>
+              <button class="danger" type="button" onclick="removeParking('${parking.id}')">Excluir</button>
+            </div>
+          </article>
+        `)
+        .join("");
+    }
+
+    function renderPartners() {
+      const root = document.getElementById("partnerList");
+      if (!state.partners.length) {
+        root.innerHTML = `<div class="empty">Nenhum estabelecimento cadastrado ainda.</div>`;
+        return;
+      }
+      root.innerHTML = state.partners
+        .map((partner) => `
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <h4>${partner.name}</h4>
+                <p class="muted">${partner.id} • ${partner.region}</p>
+              </div>
+              <span class="tag">${partner.partner_type}</span>
+            </div>
+            <div class="meta">
+              ${(partner.linked_parking_ids || []).map((item) => `<span class="tag">${item}</span>`).join("")}
+            </div>
+            <div class="actions">
+              <button class="secondary" type="button" onclick="editPartner('${partner.id}')">Editar</button>
+              <button class="danger" type="button" onclick="removePartner('${partner.id}')">Excluir</button>
+            </div>
+          </article>
+        `)
+        .join("");
+    }
+
+    function renderPlans() {
+      const root = document.getElementById("planList");
+      if (!state.plans.length) {
+        root.innerHTML = `<div class="empty">Nenhum plano cadastrado ainda.</div>`;
+        return;
+      }
+      root.innerHTML = state.plans
+        .map((plan) => `
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <h4>${plan.name}</h4>
+                <p class="muted">${plan.id}</p>
+              </div>
+              <span class="tag">${plan.audience}</span>
+            </div>
+            <div class="meta">
+              <span class="tag">${plan.revenue_type}</span>
+              <span class="tag">${plan.included_reservations} reservas</span>
+              <span class="tag">${plan.allowed_vehicle_count} veículos</span>
+            </div>
+            <div class="card-grid">
+              <div class="mini"><strong>R$ ${Number(plan.monthly_price).toFixed(2)}</strong><span class="muted">Preço</span></div>
+              <div class="mini"><strong>R$ ${Number(plan.estimated_partner_cost_per_use).toFixed(2)}</strong><span class="muted">Custo/uso</span></div>
+              <div class="mini"><strong>${plan.audience}</strong><span class="muted">Público</span></div>
+            </div>
+            <p>${plan.description}</p>
+            <div class="actions">
+              <button class="secondary" type="button" onclick="editPlan('${plan.id}')">Editar</button>
+              <button class="danger" type="button" onclick="removePlan('${plan.id}')">Excluir</button>
+            </div>
+          </article>
+        `)
+        .join("");
+    }
+
+    function fillForm(form, values) {
+      Object.entries(values).forEach(([key, value]) => {
+        const field = form.elements.namedItem(key);
+        if (!field) return;
+        field.value = Array.isArray(value) ? value.join(",") : value ?? "";
+      });
+    }
+
+    function resetParkingForm() {
+      state.editing.parking = null;
+      document.getElementById("parking-form-title").textContent = "Novo estacionamento";
+      setFormFeedback("parkingFeedback", "");
+      const form = document.getElementById("parkingForm");
+      form.reset();
+      form.elements.namedItem("mode").value = "numbered";
+      form.elements.namedItem("capacity_digital").value = 10;
+      form.elements.namedItem("base_hour_price").value = 18;
+      form.elements.namedItem("partner_cost_per_use").value = 12;
+      form.elements.namedItem("premium_fee").value = 6;
+      form.elements.namedItem("monthly_saas_price").value = 700;
+      form.elements.namedItem("id").disabled = false;
+      form.dataset.autoSlug = "true";
+    }
+
+    function resetPartnerForm() {
+      state.editing.partner = null;
+      document.getElementById("partner-form-title").textContent = "Novo estabelecimento";
+      setFormFeedback("partnerFeedback", "");
+      const form = document.getElementById("partnerForm");
+      form.reset();
+      form.elements.namedItem("partner_type").value = "parking";
+      form.elements.namedItem("id").disabled = false;
+      form.dataset.autoSlug = "true";
+    }
+
+    function resetPlanForm() {
+      state.editing.plan = null;
+      document.getElementById("plan-form-title").textContent = "Novo plano";
+      setFormFeedback("planFeedback", "");
+      const form = document.getElementById("planForm");
+      form.reset();
+      form.elements.namedItem("audience").value = "personal";
+      form.elements.namedItem("revenue_type").value = "subscription";
+      form.elements.namedItem("monthly_price").value = 189;
+      form.elements.namedItem("included_reservations").value = 12;
+      form.elements.namedItem("allowed_vehicle_count").value = 2;
+      form.elements.namedItem("estimated_partner_cost_per_use").value = 12;
+      form.elements.namedItem("id").disabled = false;
+      form.dataset.autoSlug = "true";
+    }
+
+    window.editParking = (id) => {
+      const parking = state.parkings.find((item) => item.id === id);
+      if (!parking) return;
+      state.editing.parking = id;
+      document.getElementById("parking-form-title").textContent = `Editar estacionamento • ${parking.name}`;
+      const form = document.getElementById("parkingForm");
+      fillForm(form, parking);
+      form.elements.namedItem("id").disabled = true;
+      form.dataset.autoSlug = "false";
+    };
+
+    window.editPartner = (id) => {
+      const partner = state.partners.find((item) => item.id === id);
+      if (!partner) return;
+      state.editing.partner = id;
+      document.getElementById("partner-form-title").textContent = `Editar estabelecimento • ${partner.name}`;
+      const form = document.getElementById("partnerForm");
+      fillForm(form, partner);
+      form.elements.namedItem("id").disabled = true;
+      form.dataset.autoSlug = "false";
+    };
+
+    window.editPlan = (id) => {
+      const plan = state.plans.find((item) => item.id === id);
+      if (!plan) return;
+      state.editing.plan = id;
+      document.getElementById("plan-form-title").textContent = `Editar plano • ${plan.name}`;
+      const form = document.getElementById("planForm");
+      fillForm(form, plan);
+      form.elements.namedItem("id").disabled = true;
+      form.dataset.autoSlug = "false";
+    };
+
+    window.removeParking = async (id) => {
+      if (!confirm(`Excluir estacionamento ${id}?`)) return;
+      try {
+        await api(`/admin/parkings/${id}`, { method: "DELETE" });
+        removeById(state.parkings, id);
+        renderAll();
+        setFlash("Estacionamento removido.");
+        await loadAllWithRetry(2);
+        resetParkingForm();
+      } catch (error) {
+        setFlash(error.message, "error");
+        setFormFeedback("parkingFeedback", `Exclusão bloqueada: ${error.message}`, "error");
+      }
+    };
+
+    window.removePartner = async (id) => {
+      if (!confirm(`Excluir estabelecimento ${id}?`)) return;
+      try {
+        await api(`/admin/partners/${id}`, { method: "DELETE" });
+        removeById(state.partners, id);
+        renderAll();
+        setFlash("Estabelecimento removido.");
+        await loadAllWithRetry(2);
+        resetPartnerForm();
+      } catch (error) {
+        setFlash(error.message, "error");
+        setFormFeedback("partnerFeedback", `Exclusão bloqueada: ${error.message}`, "error");
+      }
+    };
+
+    window.removePlan = async (id) => {
+      if (!confirm(`Excluir plano ${id}?`)) return;
+      try {
+        await api(`/admin/plans/${id}`, { method: "DELETE" });
+        removeById(state.plans, id);
+        renderAll();
+        setFlash("Plano removido.");
+        await loadAllWithRetry(2);
+        resetPlanForm();
+      } catch (error) {
+        setFlash(error.message, "error");
+        setFormFeedback("planFeedback", `Exclusão bloqueada: ${error.message}`, "error");
+      }
+    };
+
+    document.getElementById("parkingForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const isEditing = Boolean(state.editing.parking);
+      setSubmitting(form, true);
+      try {
+        const payload = {
+          id: getField(form, "id").value.trim(),
+          name: getField(form, "name").value.trim(),
+          region: getField(form, "region").value.trim(),
+          mode: getField(form, "mode").value,
+          base_hour_price: Number(getField(form, "base_hour_price").value),
+          partner_cost_per_use: Number(getField(form, "partner_cost_per_use").value),
+          premium_fee: Number(getField(form, "premium_fee").value),
+          monthly_saas_price: Number(getField(form, "monthly_saas_price").value),
+          capacity_digital: Number(getField(form, "capacity_digital").value),
+          tags: parseCsv(getField(form, "tags").value),
+        };
+        if (isEditing) {
+          const saved = await api(`/admin/parkings/${state.editing.parking}`, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+          });
+          applyParkingMutation(saved);
+          await refreshAfterMutation("Estacionamento atualizado.", "parkingFeedback");
+        } else {
+          const saved = await api("/admin/parkings", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          applyParkingMutation(saved);
+          await refreshAfterMutation("Estacionamento criado.", "parkingFeedback");
+        }
+        resetParkingForm();
+      } catch (error) {
+        setFlash(error.message, "error");
+        setFormFeedback("parkingFeedback", error.message, "error");
+      } finally {
+        setSubmitting(form, false);
+      }
+    });
+
+    document.getElementById("partnerForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const isEditing = Boolean(state.editing.partner);
+      setSubmitting(form, true);
+      try {
+        const payload = {
+          id: getField(form, "id").value.trim(),
+          name: getField(form, "name").value.trim(),
+          region: getField(form, "region").value.trim(),
+          partner_type: getField(form, "partner_type").value,
+          linked_parking_ids: parseCsv(getField(form, "linked_parking_ids").value),
+        };
+        if (isEditing) {
+          const saved = await api(`/admin/partners/${state.editing.partner}`, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+          });
+          applyPartnerMutation(saved);
+          await refreshAfterMutation("Estabelecimento atualizado.", "partnerFeedback");
+        } else {
+          const saved = await api("/admin/partners", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          applyPartnerMutation(saved);
+          await refreshAfterMutation("Estabelecimento criado.", "partnerFeedback");
+        }
+        resetPartnerForm();
+      } catch (error) {
+        setFlash(error.message, "error");
+        setFormFeedback("partnerFeedback", error.message, "error");
+      } finally {
+        setSubmitting(form, false);
+      }
+    });
+
+    document.getElementById("planForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const isEditing = Boolean(state.editing.plan);
+      setSubmitting(form, true);
+      try {
+        const payload = {
+          id: getField(form, "id").value.trim(),
+          name: getField(form, "name").value.trim(),
+          audience: getField(form, "audience").value,
+          revenue_type: getField(form, "revenue_type").value,
+          monthly_price: Number(getField(form, "monthly_price").value),
+          included_reservations: Number(getField(form, "included_reservations").value),
+          estimated_partner_cost_per_use: Number(getField(form, "estimated_partner_cost_per_use").value),
+          allowed_vehicle_count: Number(getField(form, "allowed_vehicle_count").value),
+          description: getField(form, "description").value.trim(),
+        };
+        if (isEditing) {
+          const saved = await api(`/admin/plans/${state.editing.plan}`, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+          });
+          applyPlanMutation(saved);
+          await refreshAfterMutation("Plano atualizado.", "planFeedback");
+        } else {
+          const saved = await api("/admin/plans", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          applyPlanMutation(saved);
+          await refreshAfterMutation("Plano criado.", "planFeedback");
+        }
+        resetPlanForm();
+      } catch (error) {
+        setFlash(error.message, "error");
+        setFormFeedback("planFeedback", error.message, "error");
+      } finally {
+        setSubmitting(form, false);
+      }
+    });
+
+    document.querySelectorAll("[data-reset]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = button.dataset.reset;
+        if (target === "parking") resetParkingForm();
+        if (target === "partner") resetPartnerForm();
+        if (target === "plan") resetPlanForm();
+      });
+    });
+
+    [
+      { formId: "parkingForm", source: "name", target: "id" },
+      { formId: "partnerForm", source: "name", target: "id" },
+      { formId: "planForm", source: "name", target: "id" },
+    ].forEach(({ formId, source, target }) => {
+      const form = document.getElementById(formId);
+      const sourceField = getField(form, source);
+      const targetField = getField(form, target);
+
+      targetField.addEventListener("input", () => {
+        if (!targetField.disabled) {
+          form.dataset.autoSlug = targetField.value.trim() ? "false" : "true";
+        }
+      });
+
+      sourceField.addEventListener("input", () => {
+        if (form.dataset.autoSlug !== "false" && !targetField.disabled) {
+          targetField.value = slugify(sourceField.value);
+        }
+      });
+    });
+
+    document.querySelectorAll(".tab-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const tab = button.dataset.tab;
+        document.querySelectorAll(".tab-btn").forEach((btn) => btn.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(`tab-${tab}`).classList.add("active");
+      });
+    });
+
+    saveBaseBtn.addEventListener("click", () => {
+      state.apiBase = apiBaseInput.value.trim().replace(/\/$/, "");
+      localStorage.setItem(storageKey, state.apiBase);
+      updateMetrics();
+      setFlash("Base da API salva.");
+    });
+
+    reloadBtn.addEventListener("click", async () => {
+      state.apiBase = apiBaseInput.value.trim().replace(/\/$/, "");
+      localStorage.setItem(storageKey, state.apiBase);
+      await loadAllWithRetry();
+    });
+
+    window.addEventListener("error", (event) => {
+      setFlash(`Erro na interface: ${event.message}`, "error");
+    });
+
+    resetParkingForm();
+    resetPartnerForm();
+    resetPlanForm();
+    updateMetrics();
+    loadAllWithRetry();
+  </script>
+</body>
+</html>

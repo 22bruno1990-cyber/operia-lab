@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>ParkFlow Comercial</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7fbff;
+      --panel: rgba(255, 255, 255, 0.97);
+      --soft: #f1f7fb;
+      --line: rgba(24, 56, 92, 0.11);
+      --text: #17324f;
+      --muted: #6f87a2;
+      --brand: #2eb8ff;
+      --brand-2: #7fe6c4;
+      --ink: #0d2942;
+      --ok: #41c88d;
+      --warn: #ffcf66;
+      --danger: #ff8a8a;
+      --shadow: 0 22px 58px rgba(34, 65, 102, 0.13);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: light; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Avenir Next", "Montserrat", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 8% 10%, rgba(46, 184, 255, 0.16), transparent 25%),
+        radial-gradient(circle at 92% 8%, rgba(127, 230, 196, 0.15), transparent 23%),
+        linear-gradient(180deg, #f8fcff 0%, #eef6fb 56%, #f7fafc 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(23, 50, 79, 0.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 50, 79, 0.032) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04));
+    }
+
+    .app {
+      width: min(1420px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 56px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar,
+    .hero,
+    .panel,
+    .metric,
+    .offer-card,
+    .deal-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .demo-switcher {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      padding: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      box-shadow: 0 18px 44px rgba(34, 65, 102, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .demo-switcher a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #23496e;
+      background: rgba(245, 249, 253, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.09);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .demo-switcher a.active {
+      color: var(--ink);
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    h1, h2, h3, h4, p { margin: 0; }
+
+    .brand h1 {
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .muted,
+    .brand p,
+    .hero p,
+    .panel p,
+    label {
+      color: var(--muted);
+    }
+
+    .pill,
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      color: #1f7d59;
+      background: rgba(65, 200, 141, 0.1);
+      border: 1px solid rgba(65, 200, 141, 0.18);
+    }
+
+    .chip {
+      color: #226996;
+      background: rgba(46, 184, 255, 0.11);
+      border: 1px solid rgba(46, 184, 255, 0.17);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 22px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 16px;
+      align-content: center;
+    }
+
+    .hero h2 {
+      max-width: 840px;
+      font-size: clamp(38px, 5.2vw, 72px);
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .hero .accent {
+      background: linear-gradient(135deg, #1589c8, #2fba7e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 780px;
+      font-size: 18px;
+      line-height: 1.62;
+    }
+
+    .hero-visual {
+      min-height: 420px;
+      border-radius: 22px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(15, 46, 74, 0.92), rgba(25, 83, 106, 0.86)),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0 2px, transparent 2px 82px);
+      position: relative;
+      color: #ffffff;
+      padding: 22px;
+      display: grid;
+      align-content: end;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 42px 28px 110px;
+      border: 2px solid rgba(255, 255, 255, 0.22);
+      border-radius: 20px;
+      background:
+        linear-gradient(90deg, transparent 0 31%, rgba(255, 255, 255, 0.2) 31% 32%, transparent 32% 65%, rgba(255, 255, 255, 0.2) 65% 66%, transparent 66%),
+        linear-gradient(180deg, transparent 0 48%, rgba(255, 255, 255, 0.18) 48% 49%, transparent 49%);
+    }
+
+    .car {
+      position: absolute;
+      width: 72px;
+      height: 38px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f8fcff, #bfe7ff);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+    }
+
+    .car.one { left: 54px; top: 72px; }
+    .car.two { right: 52px; top: 154px; background: linear-gradient(135deg, #d8fff1, #7fe6c4); }
+    .car.three { left: 160px; top: 240px; background: linear-gradient(135deg, #fff7d7, #ffcf66); }
+
+    .gate-card {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .gate-card strong {
+      font-size: 26px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel h3 {
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+
+    .metric-grid,
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric,
+    .offer-card,
+    .deal-card {
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric strong {
+      font-size: 32px;
+      letter-spacing: 0;
+    }
+
+    .offer-card h4,
+    .deal-card h4 {
+      font-size: 20px;
+    }
+
+    .calculator {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    input {
+      color-scheme: light;
+      width: 100%;
+      border: 1px solid rgba(24, 56, 92, 0.12);
+      border-radius: 16px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: rgba(46, 184, 255, 0.42);
+      box-shadow: 0 0 0 4px rgba(46, 184, 255, 0.12);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .result {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(246, 250, 254, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .result strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(246, 250, 254, 0.98);
+      border: 1px solid rgba(24, 56, 92, 0.08);
+    }
+
+    .step-number {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      border-radius: 16px;
+      padding: 13px 16px;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 18px 34px rgba(46, 184, 255, 0.18);
+    }
+
+    .button.secondary {
+      color: #23496e;
+      background: rgba(245, 249, 253, 0.96);
+      border: 1px solid rgba(24, 56, 92, 0.1);
+      box-shadow: none;
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .section-grid,
+      .metric-grid,
+      .offer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 340px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .app { width: min(100%, calc(100% - 18px)); }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .field-grid,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+      .demo-switcher {
+        left: 10px;
+        right: 10px;
+        border-radius: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="demo-switcher" aria-label="Alternar visão da demo">
+    <a href="parkflow_driver.html">Driver</a>
+    <a href="parkflow_ops.html">Parking</a>
+    <a class="active" href="parkflow_partner.html">Comercial</a>
+    <a href="parkflow_home.html">Início</a>
+  </nav>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">P</div>
+        <div>
+          <h1>ParkFlow Comercial</h1>
+          <p>Janela de venda para estacionamento parceiro</p>
+        </div>
+      </div>
+      <span class="pill">Piloto em 30 dias</span>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="pill">Oferta para o parceiro</span>
+        <h2>Transforme vagas ociosas em reservas pagas, <span class="accent">sem complicar o balcão.</span></h2>
+        <p>O ParkFlow leva demanda digital para o estacionamento, organiza a chegada por placa e entrega um painel simples para o operador controlar entrada, saída, atraso e hora extra.</p>
+        <div class="cta-row">
+          <a class="button" href="parkflow_ops.html">Ver operação ao vivo</a>
+          <a class="button secondary" href="parkflow_driver.html">Ver experiência do motorista</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Visual demonstrativo de pátio com reservas digitais">
+        <div class="car one"></div>
+        <div class="car two"></div>
+        <div class="car three"></div>
+        <div class="gate-card">
+          <span class="chip">Entrada por placa</span>
+          <strong>RTA-5H47 liberada</strong>
+          <p>Reserva confirmada, pagamento aprovado e operador com ação clara no painel.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-grid" aria-label="Resumo comercial">
+      <article class="metric">
+        <span class="chip">Receita nova</span>
+        <strong id="metricMonthly">R$ 7.560</strong>
+        <p class="muted">Potencial mensal em reservas digitais com os parâmetros atuais.</p>
+      </article>
+      <article class="metric">
+        <span class="chip">Controle</span>
+        <strong>10 vagas</strong>
+        <p class="muted">Inventário digital limitado para não atrapalhar o balcão.</p>
+      </article>
+      <article class="metric">
+        <span class="chip">Operação</span>
+        <strong>1 tela</strong>
+        <p class="muted">Check-in por placa, fila, saída próxima, atraso e hora extra.</p>
+      </article>
+    </section>
+
+    <section class="section-grid" style="margin-top:20px;">
+      <article class="panel">
+        <span class="pill">Conta rápida</span>
+        <h3>Simule o ganho do estacionamento</h3>
+        <p>Use números conservadores para mostrar o piloto como receita incremental controlada, sem prometer ocupação impossível.</p>
+        <div class="calculator">
+          <div class="field-grid">
+            <label>
+              Vagas digitais
+              <input id="digitalSpots" type="number" min="1" max="80" value="10">
+            </label>
+            <label>
+              Reservas por vaga/dia
+              <input id="turnover" type="number" min="0.1" max="8" step="0.1" value="1.2">
+            </label>
+          </div>
+          <div class="field-grid">
+            <label>
+              Ticket médio
+              <input id="ticket" type="number" min="5" max="150" step="1" value="28">
+            </label>
+            <label>
+              Dias ativos/mês
+              <input id="days" type="number" min="1" max="31" value="25">
+            </label>
+          </div>
+          <div class="result-grid">
+            <div class="result">
+              <strong id="monthlyRevenue">R$ 7.560</strong>
+              <span class="muted">Receita bruta incremental</span>
+            </div>
+            <div class="result">
+              <strong id="monthlyReservations">300</strong>
+              <span class="muted">Reservas digitais no mês</span>
+            </div>
+            <div class="result">
+              <strong id="parkflowFee">R$ 1.134</strong>
+              <span class="muted">Taxa ParkFlow estimada</span>
+            </div>
+            <div class="result">
+              <strong id="partnerNet">R$ 6.426</strong>
+              <span class="muted">Repasse antes de custos locais</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pill">Como vender</span>
+        <h3>Argumento de reunião</h3>
+        <div class="offer-grid">
+          <article class="offer-card">
+            <h4>Demanda organizada</h4>
+            <p class="muted">O cliente chega com placa, horário e pagamento, reduzindo conversa no caixa.</p>
+          </article>
+          <article class="offer-card">
+            <h4>Capacidade protegida</h4>
+            <p class="muted">O parceiro define quantas vagas entram no digital e mantém controle do pátio.</p>
+          </article>
+          <article class="offer-card">
+            <h4>Receita rastreável</h4>
+            <p class="muted">Cada reserva mostra valor, repasse, status, hora extra e histórico operacional.</p>
+          </article>
+        </div>
+        <div class="deal-card">
+          <span class="chip">Oferta inicial</span>
+          <h4>Piloto sem integração com cancela</h4>
+          <p class="muted">Começa manual: painel no balcão, conferência por placa e reserva limitada. LPR e cancela entram depois que o fluxo provar volume.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="section-grid">
+      <article class="panel">
+        <span class="pill">Piloto sugerido</span>
+        <h3>Implantação enxuta para fechar rápido</h3>
+        <div class="timeline">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div>
+              <h4>Semana 1</h4>
+              <p class="muted">Selecionar 10 a 20 vagas digitais, combinar regras de atraso, hora extra e repasse.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div>
+              <h4>Semana 2</h4>
+              <p class="muted">Treinar operador, cadastrar estacionamento, testar check-in por placa e reservas demo.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div>
+              <h4>Semanas 3 e 4</h4>
+              <p class="muted">Rodar reservas reais, medir chegada, no-show, ocupação e receita incremental.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="pill">Fechamento</span>
+        <h3>Proposta para o primeiro parceiro</h3>
+        <div class="offer-grid">
+          <article class="offer-card">
+            <h4>Sem trocar sistema</h4>
+            <p class="muted">O painel funciona separado no início, como camada de reservas digitais.</p>
+          </article>
+          <article class="offer-card">
+            <h4>Sem mexer na cancela</h4>
+            <p class="muted">Operação manual validada antes de qualquer automação física.</p>
+          </article>
+          <article class="offer-card">
+            <h4>Sem vender o pátio inteiro</h4>
+            <p class="muted">Começa com lote pequeno e aumenta quando fizer sentido.</p>
+          </article>
+        </div>
+        <div class="deal-card">
+          <h4>Frase de fechamento</h4>
+          <p class="muted">"A gente não quer mudar sua operação inteira. Quer separar um pequeno lote digital, trazer clientes que já chegam pagos e medir se essa receita nova vale escalar."</p>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    const formatter = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    });
+
+    const numberFormatter = new Intl.NumberFormat("pt-BR", {
+      maximumFractionDigits: 0,
+    });
+
+    const inputs = ["digitalSpots", "turnover", "ticket", "days"].map((id) => document.getElementById(id));
+
+    function updateCalculator() {
+      const digitalSpots = Number(document.getElementById("digitalSpots").value || 0);
+      const turnover = Number(document.getElementById("turnover").value || 0);
+      const ticket = Number(document.getElementById("ticket").value || 0);
+      const days = Number(document.getElementById("days").value || 0);
+      const reservations = Math.round(digitalSpots * turnover * days);
+      const revenue = Math.round(reservations * ticket);
+      const fee = Math.round(revenue * 0.15);
+      const net = Math.max(revenue - fee, 0);
+
+      document.getElementById("monthlyRevenue").textContent = formatter.format(revenue);
+      document.getElementById("metricMonthly").textContent = formatter.format(revenue);
+      document.getElementById("monthlyReservations").textContent = numberFormatter.format(reservations);
+      document.getElementById("parkflowFee").textContent = formatter.format(fee);
+      document.getElementById("partnerNet").textContent = formatter.format(net);
+    }
+
+    inputs.forEach((input) => input.addEventListener("input", updateCalculator));
+    updateCalculator();
+  </script>
+</body>
+</html>
