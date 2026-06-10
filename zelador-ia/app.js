@@ -115,6 +115,30 @@ const categoryProfiles = {
   }
 };
 
+const preventiveProfile = {
+  title: "Sem defeito aparente na foto",
+  technical: "A imagem ou descrição não indica uma anomalia evidente. Mesmo assim, o registro pode sugerir pontos de atenção preventiva, como umidade inicial, desgaste de acabamento, fixações soltas, vedação comprometida, sujidade recorrente ou componente em início de falha. Use esta leitura como triagem visual e confirme em vistoria simples no local.",
+  category: "civil",
+  severity: "Media",
+  pro: "Zelador ou manutenção predial",
+  crew: "1 profissional",
+  duration: "15 a 40 minutos",
+  cost: "R$ 0 - R$ 250",
+  costMin: 0,
+  costMax: 250,
+  deadline: "Monitorar em 7 a 15 dias",
+  actions: [
+    "Registrar a área como base comparativa para próximas vistorias.",
+    "Verificar se há umidade ao toque, odor, trinca fina, peça solta ou alteração de cor.",
+    "Repetir foto no mesmo ângulo após alguns dias ou depois de chuva/uso intenso.",
+    "Abrir OS apenas se houver evolução, risco de uso ou reclamação recorrente."
+  ],
+  materials: ["Sem material corretivo imediato", "Checklist de inspeção", "Lanterna", "Trena", "Pano de teste", "EPI básico"],
+  scope: ["Inspeção visual preventiva", "Comparação com fotos futuras", "Checagem de umidade/odor/fixação", "Registro de ponto de atenção", "Validação antes de acionar prestador"],
+  checks: ["Foto de referência salva", "Sem evolução visual em nova vistoria", "Sem risco aparente de uso", "Sem necessidade de acionar prestador no momento"],
+  preventive: true
+};
+
 const scenarios = {
   umidade: {
     location: "Banheiro masculino - 7o andar",
@@ -365,22 +389,39 @@ function sanitizeDeadline(deadline, severity, category) {
   return value;
 }
 
+function shouldUsePreventiveProfile(aiReport, description, selectedCategory, urgency) {
+  if (aiReport) {
+    const text = `${aiReport.title || ""} ${aiReport.technical || ""}`.toLowerCase();
+    return /sem defeito|sem problema|sem anomalia|não h[aá] defeito|n[aã]o h[aá] problema|nada aparente|sem evid[eê]ncia/.test(text);
+  }
+
+  const text = description.toLowerCase().trim();
+  const neutralTerms = ["sem defeito", "sem problema", "nada aparente", "não vi problema", "nao vi problema", "vistoria", "preventiva", "conferir", "inspecionar", "inspeção", "inspecao"];
+  const defectTerms = ["vazamento", "goteira", "infiltração", "infiltracao", "trinca", "rachadura", "quebrado", "solto", "choque", "curto", "queimado", "barulho", "mofo", "odor", "cheiro", "entupido", "mancha", "bolha"];
+
+  if (neutralTerms.some((term) => text.includes(term)) && !defectTerms.some((term) => text.includes(term))) return true;
+  return beforePhotos.length > 0 && selectedCategory === "auto" && urgency === "normal" && text.length < 12;
+}
+
 function buildAnalysis(aiReport) {
   const description = document.querySelector("#descriptionInput").value.trim();
   const selectedCategory = document.querySelector("#categoryInput").value;
   const urgency = document.querySelector("#urgencyInput").value;
-  const category = aiReport?.category || detectCategory(description, selectedCategory);
+  const usePreventive = shouldUsePreventiveProfile(aiReport, description, selectedCategory, urgency);
+  const baseReport = usePreventive ? { ...preventiveProfile, ...(aiReport || {}), preventive: true } : aiReport;
+  const category = baseReport?.category || detectCategory(description, selectedCategory);
   const profile = categoryProfiles[category] || categoryProfiles.civil;
-  const severity = aiReport?.severity || calculateSeverity(category, urgency, description);
+  const severity = baseReport?.severity || calculateSeverity(category, urgency, description);
   return {
-    ...profile,
-    ...(aiReport || {}),
+    ...(usePreventive ? preventiveProfile : profile),
+    ...(baseReport || {}),
     category,
     severity,
-    deadline: sanitizeDeadline(aiReport?.deadline || profile.deadline, severity, category),
-    cost: aiReport?.cost || profile.cost,
-    costMin: aiReport?.costMin || profile.costMin,
-    costMax: aiReport?.costMax || profile.costMax,
+    deadline: sanitizeDeadline(baseReport?.deadline || profile.deadline, severity, category),
+    cost: baseReport?.cost || (usePreventive ? preventiveProfile.cost : profile.cost),
+    costMin: baseReport?.costMin ?? (usePreventive ? preventiveProfile.costMin : profile.costMin),
+    costMax: baseReport?.costMax ?? (usePreventive ? preventiveProfile.costMax : profile.costMax),
+    preventive: usePreventive,
     reportId: `ZIA-${Date.now().toString().slice(-6)}`,
     reportDate: new Date().toLocaleDateString("pt-BR"),
     location: document.querySelector("#locationInput").value.trim() || "Local não informado",
@@ -724,7 +765,9 @@ function buildSupplierSummary() {
   const deadlineText = providerDeadline ? ` Prazo informado pelo prestador: ${providerDeadline}.` : "";
   const quoteText = providerQuote ? ` Proposta informada: ${providerQuote}.` : "";
   const laborText = laborQuote ? ` Mão de obra informada: ${laborQuote}.` : "";
-  return `Pré-laudo Zelador.ia ${currentAnalysis.reportId} - ${property.name} - ${currentAnalysis.location}. Tecnologia Operia Lab. Emissão: ${currentAnalysis.reportDate}. Problema provável: ${currentAnalysis.title}. Criticidade: ${severityLabel(currentAnalysis.severity)}. Profissional indicado: ${currentAnalysis.pro}. Prazo sugerido: ${currentAnalysis.deadline}. Referência de custo pesquisada: ${currentAnalysis.cost}.${providerText}${deadlineText}${quoteText}${laborText} Materiais prováveis: ${currentAnalysis.materials.join(", ")}. Escopo sugerido: ${currentAnalysis.scope.join("; ")}. Evidências anexadas: ${beforePhotos.length + afterPhotos.length} foto(s).`;
+  const diagnosisLabel = currentAnalysis.preventive ? "Leitura preventiva" : "Problema provável";
+  const materialsLabel = currentAnalysis.preventive ? "Itens de apoio para vistoria" : "Materiais prováveis";
+  return `Pré-laudo Zelador.ia ${currentAnalysis.reportId} - ${property.name} - ${currentAnalysis.location}. Tecnologia Operia Lab. Emissão: ${currentAnalysis.reportDate}. ${diagnosisLabel}: ${currentAnalysis.title}. Criticidade: ${severityLabel(currentAnalysis.severity)}. Profissional indicado: ${currentAnalysis.pro}. Prazo sugerido: ${currentAnalysis.deadline}. Referência de custo pesquisada: ${currentAnalysis.cost}.${providerText}${deadlineText}${quoteText}${laborText} ${materialsLabel}: ${currentAnalysis.materials.join(", ")}. Escopo sugerido: ${currentAnalysis.scope.join("; ")}. Evidências anexadas: ${beforePhotos.length + afterPhotos.length} foto(s).`;
 }
 
 async function requestAiAnalysis() {
@@ -763,7 +806,7 @@ function renderReport(aiReport, source = "demo") {
   document.querySelector("#emptyStaté").classList.add("hidden");
   document.querySelector("#report").classList.remove("hidden");
   const sourceBanner = document.querySelector("#sourceBanner");
-  sourceBanner.textContent = source === "openai" ? "Origem: IA visual aplicada nas fotos" : "Origem: demo local / exemplo sem análise visual";
+  sourceBanner.textContent = currentAnalysis.preventive ? "Origem: leitura preventiva sem defeito aparente" : source === "openai" ? "Origem: IA visual aplicada nas fotos" : "Origem: demo local / exemplo sem análise visual";
   sourceBanner.className = source === "openai" ? "source-banner ai-source" : "source-banner demo-source";
   document.querySelector("#problemTitle").textContent = currentAnalysis.title;
   document.querySelector("#technicalText").textContent = currentAnalysis.technical;
@@ -777,12 +820,12 @@ function renderReport(aiReport, source = "demo") {
   document.querySelector("#crewText").textContent = currentAnalysis.crew;
   document.querySelector("#durationText").textContent = currentAnalysis.duration;
   document.querySelector("#statusText").textContent = "Aberto";
-  caseStatus.textContent = `Chamado aberto: ${currentAnalysis.location}`;
+  caseStatus.textContent = currentAnalysis.preventive ? `Vistoria preventiva: ${currentAnalysis.location}` : `Chamado aberto: ${currentAnalysis.location}`;
   fillList(document.querySelector("#actionsList"), currentAnalysis.actions);
   fillTags(document.querySelector("#materialsList"), currentAnalysis.materials);
   fillScope(document.querySelector("#scopeList"), currentAnalysis.scope);
   fillChecklist(document.querySelector("#checklist"), currentAnalysis.checks);
-  const sourceLabel = source === "openai" ? "Análise visual por IA aplicada sobre as fotos." : "Demo usando descrição/categoria como fallback até configurar a API.";
+  const sourceLabel = currentAnalysis.preventive ? "Sem defeito aparente: a lista abaixo indica hipóteses preventivas para observar antes de acionar prestador." : source === "openai" ? "Análise visual por IA aplicada sobre as fotos." : "Demo usando descrição/categoria como fallback até configurar a API.";
   document.querySelector("#priceNote").textContent = `Pesquisa média para referência: ${currentAnalysis.cost}. ${sourceLabel} Use isso como base para conversar com o prestador, sem substituir vistoria técnica.`;
   document.querySelector("#supplierSummary").textContent = buildSupplierSummary();
   renderEvidenceGrid();
