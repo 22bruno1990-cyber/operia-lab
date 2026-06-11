@@ -56,3 +56,5 @@ Modelo simples para iniciar:
 
 - `OPERIA_KIT_DIVULGACAO.md`: mensagens por nicho, follow-ups e roteiro de conversa.
 - `operia_crm_leads.csv`: CRM simples para mapear leads, status e proximo passo.
+- `OPERIA_PROSPECCAO_DADOS_PUBLICOS.md`: fluxo para usar JUCESP/dados publicos sem abordagem invasiva.
+- `operia_crm_prospeccao_publica.csv`: CRM especifico para leads encontrados em bases publicas.

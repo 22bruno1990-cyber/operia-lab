@@ -1,0 +1,5 @@
+data_mapeamento,fonte,nicho,razao_social,nome_fantasia,cnpj,cidade,uf,cnae_ou_segmento,canal_publico,contato_publico,solucao_sugerida,motivo_aderencia,status,data_primeiro_contato,data_followup_1,data_followup_2,resposta,proximo_passo,nao_contatar,observacoes
+2026-06-11,JUCESP/consulta publica,Saude,,,,,SP,Clinica/servico de saude,,,"OncoNavega; Controle de Touca; Auditoria de Guias",Operacao assistencial com agenda/autorizacao/guias,Mapear lead,,,,,,Nao,
+2026-06-11,JUCESP/consulta publica,Condominios,,,,,SP,Administradora/facilities/manutencao,,,"Zelador.ia; ParkFlow","Rotina de chamados, fotos, prestadores ou reservas",Mapear lead,,,,,,Nao,
+2026-06-11,JUCESP/consulta publica,Pequenos negocios,,,,,SP,Servico/operacao interna,,,"DocSignal; ParkFlow; Automacoes leves",Processos possivelmente manuais com documentos/fila/reserva,Mapear lead,,,,,,Nao,
+2026-06-11,JUCESP/consulta publica,Consultoria financeira,,,,,SP,Consultoria/educacao financeira,,,Minha Inflacao,Diagnostico de consumo por cupom fiscal para clientes,Mapear lead,,,,,,Nao,
