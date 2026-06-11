@@ -8,27 +8,25 @@ Visao: ser referencia em aplicacoes praticas de IA, dados e automacao para opera
 
 Valores: clareza, responsabilidade, utilidade, seguranca de dados e evolucao continua.
 
-## E-mail corporativo
+## Canal comercial temporario
 
-Endereco principal sugerido:
+Endereco principal em fase de validacao:
 
-- contato@laboperia.com
+- contato.operialab@gmail.com
 
-Aliases uteis:
+Identidade publica sugerida:
 
-- comercial@laboperia.com
-- suporte@laboperia.com
-- demos@laboperia.com
+- Nome de exibicao: Operia Lab
+- Uso no site: Canal comercial Operia Lab
+- Evitar exibir o Gmail em rodapes e textos publicos.
 
 Passos:
 
-1. Registrar ou confirmar o dominio oficial da Operia Lab.
-2. Contratar um provedor de e-mail corporativo.
-3. Verificar o dominio no provedor escolhido.
-4. Configurar registros DNS de e-mail: MX, SPF, DKIM e DMARC.
-5. Criar a caixa principal `contato@laboperia.com`.
-6. Trocar o e-mail em `app.js`, caso o endereco final seja diferente.
-7. Testar envio pelo formulario de interesse da vitrine.
+1. Ajustar o nome de exibicao da conta Gmail para `Operia Lab`.
+2. Usar foto/icone da marca, nao foto pessoal.
+3. Manter o endereco real apenas no destino do formulario.
+4. Migrar para dominio proprio quando houver validacao comercial.
+5. Testar envio pelo formulario de interesse da vitrine.
 
 ## Rotina de resposta
 

@@ -1,4 +1,4 @@
-const CONTACT_EMAIL = "contato@laboperia.com";
+const CONTACT_EMAIL = "contato.operialab@gmail.com";
 const anchorLinks = document.querySelectorAll('a[href^="#"], a[href^="index.html#"]');
 
 function scrollToSection(targetId) {
@@ -76,7 +76,7 @@ interestForm?.addEventListener("submit", (event) => {
 
   const subject = `Interesse comercial - ${solution || "Operia Lab"}`;
   const body = [
-    "Olá, Operia Lab.",
+    "Olá, equipe Operia Lab.",
     "",
     "Tenho interesse em conversar sobre uma solução.",
     "",
