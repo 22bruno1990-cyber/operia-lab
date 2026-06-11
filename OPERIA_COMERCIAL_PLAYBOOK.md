@@ -51,3 +51,8 @@ Modelo simples para iniciar:
 - Manter apps de clientes separados por instancia, dados e secrets.
 - Evitar prometer integracoes antes de validar acesso, API e viabilidade.
 - Formalizar escopo do piloto para evitar virar consultoria aberta.
+
+## Materiais de divulgacao
+
+- `OPERIA_KIT_DIVULGACAO.md`: mensagens por nicho, follow-ups e roteiro de conversa.
+- `operia_crm_leads.csv`: CRM simples para mapear leads, status e proximo passo.
