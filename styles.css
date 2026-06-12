@@ -109,7 +109,7 @@ img {
 .header-action:hover,
 .card-footer a:hover,
 .sales-actions a:hover {
-  color: var(--green);
+  color: var(--gold);
 }
 
 .header-action {
@@ -582,7 +582,7 @@ h3 {
 }
 
 .sales-section .section-kicker {
-  color: #82d8bd;
+  color: #e7bd72;
 }
 
 .sales-section-actions {
@@ -593,8 +593,8 @@ h3 {
 }
 
 .sales-section-actions .button.primary {
-  background: #82d8bd;
-  color: #0d2f24;
+  background: var(--gold);
+  color: #241806;
 }
 
 .sales-section-actions .button.secondary {
@@ -731,8 +731,8 @@ h3 {
 .concept-visual.docsignal::before {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%),
-    radial-gradient(circle at 82% 18%, rgba(130, 216, 189, 0.42), transparent 126px),
-    linear-gradient(135deg, #204b44, #17201d);
+    radial-gradient(circle at 82% 18%, rgba(49, 95, 141, 0.5), transparent 126px),
+    linear-gradient(135deg, #1f3f64, #17201d);
 }
 
 .concept-visual.audit::before {
@@ -765,7 +765,7 @@ h3 {
   align-items: center;
   padding: 8px 11px;
   border-radius: 8px;
-  background: rgba(18, 72, 56, 0.92);
+  background: rgba(49, 95, 141, 0.94);
   color: var(--white);
   font-size: 0.84rem;
   font-weight: 900;
@@ -775,6 +775,26 @@ h3 {
 .concept-visual .status-badge {
   top: 14px;
   bottom: auto;
+}
+
+.concept-visual.oncology .status-badge,
+.concept-visual.docsignal .status-badge {
+  background: rgba(49, 95, 141, 0.94);
+}
+
+.concept-visual.cooling .status-badge,
+.concept-visual.mobility .status-badge {
+  background: rgba(165, 80, 90, 0.94);
+}
+
+.concept-visual.inflation .status-badge,
+.concept-visual.maintenance .status-badge {
+  background: rgba(197, 146, 61, 0.95);
+  color: #241806;
+}
+
+.concept-visual.audit .status-badge {
+  background: rgba(75, 127, 115, 0.94);
 }
 
 .sales-body {
@@ -831,8 +851,8 @@ h3 {
 }
 
 .sales-actions .button.secondary {
-  border-color: rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(231, 189, 114, 0.42);
+  background: rgba(197, 146, 61, 0.14);
   color: var(--white);
 }
 
