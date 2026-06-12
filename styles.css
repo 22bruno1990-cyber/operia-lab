@@ -902,6 +902,172 @@ h3 {
   font-size: 0.9rem;
 }
 
+.commercial-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.54fr);
+  gap: clamp(28px, 5vw, 68px);
+  align-items: center;
+  min-height: calc(100vh - 72px);
+  padding: clamp(46px, 8vw, 88px) clamp(18px, 5vw, 64px);
+  background:
+    linear-gradient(115deg, rgba(49, 95, 141, 0.14), transparent 42%),
+    linear-gradient(180deg, rgba(251, 252, 249, 0.88) 0%, rgba(247, 248, 244, 0.94) 100%);
+}
+
+.commercial-summary {
+  display: grid;
+  gap: 12px;
+}
+
+.commercial-summary article {
+  min-height: 132px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 18px 42px rgba(23, 32, 29, 0.08);
+}
+
+.commercial-summary strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--green-dark);
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+.commercial-summary span {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.commercial-map-section {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.commercial-map-heading {
+  align-items: start;
+}
+
+.commercial-map-heading p:last-child {
+  max-width: 560px;
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.commercial-rank-list {
+  display: grid;
+  gap: 16px;
+}
+
+.rank-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 70px minmax(220px, 0.42fr) minmax(0, 1fr);
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: 0 18px 44px rgba(23, 32, 29, 0.07);
+}
+
+.rank-number {
+  display: grid;
+  min-height: 100%;
+  place-items: center;
+  background: var(--green-dark);
+  color: var(--white);
+  font-weight: 950;
+  writing-mode: vertical-rl;
+}
+
+.rank-card.ready .rank-number {
+  background: var(--green-dark);
+}
+
+.rank-card.demo .rank-number {
+  background: var(--blue);
+}
+
+.rank-card.prototype .rank-number {
+  background: var(--gold);
+  color: #2d2111;
+}
+
+.rank-cover {
+  display: block;
+  min-height: 100%;
+  background: #0d1513;
+}
+
+.rank-cover img {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+}
+
+.rank-body {
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.rank-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.rank-meta span {
+  min-height: 32px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: var(--mist);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.rank-body h3 {
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+}
+
+.rank-body p,
+.rank-body dd {
+  color: var(--muted);
+}
+
+.rank-body dl {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 0;
+}
+
+.rank-body dl div {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.rank-body dt {
+  color: var(--green-dark);
+  font-weight: 900;
+}
+
+.rank-body dd {
+  margin: 0;
+}
+
+.rank-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
 .product-hero {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.8fr);
@@ -991,6 +1157,7 @@ h3 {
   .intro-band,
   .meeting-section,
   .interest-section,
+  .commercial-hero,
   .product-hero {
     grid-template-columns: 1fr;
   }
@@ -1009,6 +1176,14 @@ h3 {
 
   .sales-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rank-card {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+
+  .rank-cover {
+    display: none;
   }
 
   .sales-card,
@@ -1067,6 +1242,11 @@ h3 {
 
   .site-footer {
     flex-direction: column;
+  }
+
+  .rank-body dl div {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }
 
