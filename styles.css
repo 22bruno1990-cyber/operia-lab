@@ -721,6 +721,20 @@ h3 {
     linear-gradient(135deg, #713d4a, #17201d);
 }
 
+.concept-visual.inflation::before {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%),
+    radial-gradient(circle at 82% 18%, rgba(197, 146, 61, 0.5), transparent 126px),
+    linear-gradient(135deg, #5a451f, #17201d);
+}
+
+.concept-visual.docsignal::before {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%),
+    radial-gradient(circle at 82% 18%, rgba(130, 216, 189, 0.42), transparent 126px),
+    linear-gradient(135deg, #204b44, #17201d);
+}
+
 .concept-visual.audit::before {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%),
