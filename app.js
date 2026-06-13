@@ -1,4 +1,4 @@
-const CONTACT_EMAIL = "contato.operialab@gmail.com";
+const FORM_ENDPOINT = "";
 const anchorLinks = document.querySelectorAll('a[href^="#"], a[href^="index.html#"]');
 
 function scrollToSection(targetId) {
@@ -64,7 +64,7 @@ function formValue(formData, key) {
   return String(formData.get(key) || "").trim();
 }
 
-interestForm?.addEventListener("submit", (event) => {
+interestForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const formData = new FormData(interestForm);
@@ -74,24 +74,51 @@ interestForm?.addEventListener("submit", (event) => {
   const solution = formValue(formData, "solution");
   const message = formValue(formData, "message");
 
-  const subject = `Interesse comercial - ${solution || "Operia Lab"}`;
-  const body = [
-    "Olá, equipe Operia Lab.",
-    "",
-    "Tenho interesse em conversar sobre uma solução.",
-    "",
-    `Nome: ${name}`,
-    `Empresa: ${company || "Não informado"}`,
-    `Contato de retorno: ${contact}`,
-    `Solução de interesse: ${solution || "Não informado"}`,
-    "",
-    "Contexto:",
-    message || "Não informado",
-  ].join("\n");
-
-  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const payload = {
+    subject: `Interesse comercial - ${solution || "Operia Lab"}`,
+    name,
+    company: company || "Não informado",
+    contact,
+    solution: solution || "Não informado",
+    message: message || "Não informado",
+    source: "operia-lab-vitrine",
+    page: window.location.href,
+  };
 
   if (interestStatus) {
-    interestStatus.textContent = "Mensagem preparada. Se o e-mail não abrir, revise o contato configurado no navegador.";
+    interestStatus.textContent = "Enviando interesse pelo canal seguro da Operia Lab...";
+  }
+
+  if (!FORM_ENDPOINT) {
+    if (interestStatus) {
+      interestStatus.textContent = "Canal automático em configuração. O formulário já não expõe e-mail; falta conectar o endpoint de recebimento.";
+    }
+
+    return;
+  }
+
+  try {
+    const response = await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error("Falha ao enviar interesse.");
+    }
+
+    interestForm.reset();
+
+    if (interestStatus) {
+      interestStatus.textContent = "Interesse enviado. A Operia Lab retornará pelo contato informado.";
+    }
+  } catch (error) {
+    if (interestStatus) {
+      interestStatus.textContent = "Não foi possível enviar agora. Tente novamente em instantes.";
+    }
   }
 });
