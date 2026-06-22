@@ -721,6 +721,13 @@ h3 {
     linear-gradient(135deg, #713d4a, #17201d);
 }
 
+.concept-visual.crm::before {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%),
+    radial-gradient(circle at 82% 18%, rgba(75, 127, 115, 0.5), transparent 126px),
+    linear-gradient(135deg, #244e49, #17201d);
+}
+
 .concept-visual.inflation::before {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 38%),
@@ -778,6 +785,7 @@ h3 {
 }
 
 .concept-visual.oncology .status-badge,
+.concept-visual.crm .status-badge,
 .concept-visual.docsignal .status-badge {
   background: rgba(49, 95, 141, 0.94);
 }
